@@ -20,6 +20,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: src/pokesoundle
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -29,6 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: src/pokesoundle/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -42,7 +47,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./out
+          path: ./src/pokesoundle/out
 
   deploy:
     environment:
