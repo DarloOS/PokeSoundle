@@ -7,20 +7,20 @@ const TIME_ZONE = "Europe/Madrid";
  * Obtiene la fecha YYYY-MM-DD correspondiente a España peninsular.
  */
 function getDateInMadrid(date: Date = new Date()): string {
-    const formatter = new Intl.DateTimeFormat("en-GB", {
-        timeZone: TIME_ZONE,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    timeZone: TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 
-    const parts = formatter.formatToParts(date);
+  const parts = formatter.formatToParts(date);
 
-    const year = parts.find((part) => part.type === "year")!.value;
-    const month = parts.find((part) => part.type === "month")!.value;
-    const day = parts.find((part) => part.type === "day")!.value;
+  const year = parts.find((part) => part.type === "year")!.value;
+  const month = parts.find((part) => part.type === "month")!.value;
+  const day = parts.find((part) => part.type === "day")!.value;
 
-    return `${year}-${month}-${day}`;
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -28,11 +28,9 @@ function getDateInMadrid(date: Date = new Date()): string {
  * Usamos UTC aquí para evitar problemas con cambios de horario.
  */
 function dateToDayNumber(dateString: string): number {
-    const [year, month, day] = dateString.split("-").map(Number);
+  const [year, month, day] = dateString.split("-").map(Number);
 
-    return Math.floor(
-        Date.UTC(year, month - 1, day) / (1000 * 60 * 60 * 24)
-    );
+  return Math.floor(Date.UTC(year, month - 1, day) / (1000 * 60 * 60 * 24));
 }
 
 /**
@@ -40,12 +38,12 @@ function dateToDayNumber(dateString: string): number {
  * Día de lanzamiento = 1
  */
 export function getPokeSoundleNumber(date: Date = new Date()): number {
-    const today = getDateInMadrid(date);
+  const today = getDateInMadrid(date);
 
-    const launchDay = dateToDayNumber(LAUNCH_DATE);
-    const currentDay = dateToDayNumber(today);
+  const launchDay = dateToDayNumber(LAUNCH_DATE);
+  const currentDay = dateToDayNumber(today);
 
-    return Math.max(1, currentDay - launchDay + 1);
+  return Math.max(1, currentDay - launchDay + 1);
 }
 
 /**
@@ -55,11 +53,10 @@ export function getPokeSoundleNumber(date: Date = new Date()): number {
  * 107 Pokémon sin repetir antes de completar el ciclo.
  */
 export function getDailyPokemon(date: Date = new Date()): Pokemon {
-    const dayNumber = getPokeSoundleNumber(date);
-    const dayIndex = dayNumber - 1;
+  const dayNumber = getPokeSoundleNumber(date);
+  const dayIndex = dayNumber - 1;
 
-    const pokemonIndex =
-        (dayIndex * 37 + 17) % pokemon.length;
+  const pokemonIndex = (dayIndex * 37 + 17) % pokemon.length;
 
-    return pokemon[pokemonIndex];
+  return pokemon[pokemonIndex];
 }

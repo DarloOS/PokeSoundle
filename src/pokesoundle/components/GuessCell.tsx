@@ -1,32 +1,29 @@
 type GuessCellProps = {
-    label: string;
-    correct: boolean;
-    partial?: boolean;
-    direction?: "up" | "down";
+  label: string;
+  correct: boolean;
+  partial?: boolean;
+  direction?: "up" | "down";
 };
 
 export default function GuessCell({
-                                      label,
-                                      correct,
-                                      partial = false,
-                                      direction,
-                                  }: GuessCellProps) {
-    let colorClasses =
-        "border-red-500 bg-red-700 text-white";
+  label,
+  correct,
+  partial = false,
+  direction,
+}: GuessCellProps) {
+  let colorClasses = "border-red-500 bg-red-700 text-white";
 
-    if (partial) {
-        colorClasses =
-            "border-yellow-400 bg-yellow-500 text-black";
-    }
+  if (partial) {
+    colorClasses = "border-yellow-400 bg-yellow-500 text-black";
+  }
 
-    if (correct) {
-        colorClasses =
-            "border-green-500 bg-green-600 text-white";
-    }
+  if (correct) {
+    colorClasses = "border-green-500 bg-green-600 text-white";
+  }
 
-    return (
-        <div
-            className={`
+  return (
+    <div
+      className={`
         relative
         flex
         h-20
@@ -41,14 +38,14 @@ export default function GuessCell({
         font-bold
         ${colorClasses}
       `}
-        >
-            {label}
+    >
+      {label}
 
-            {!correct && !partial && direction && (
-                <span className="absolute right-1 top-0 text-xl">
+      {!correct && !partial && direction && (
+        <span className="absolute right-1 top-0 text-xl">
           {direction === "up" ? "↑" : "↓"}
         </span>
-            )}
-        </div>
-    );
+      )}
+    </div>
+  );
 }

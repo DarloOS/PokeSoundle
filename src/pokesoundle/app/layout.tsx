@@ -14,8 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PokeSoundle",
-  description:
-      "Adivina el Pokémon de cuarta generación a partir de su grito.",
+  description: "Adivina el Pokémon de cuarta generación a partir de su grito.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
