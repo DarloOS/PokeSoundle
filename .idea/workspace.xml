@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BackgroundAgentGlobalSettings">
+    <option name="selectedModelId" value="auto" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/GuessCell.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/NextPokemonCountdown.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/PokeSoundleGame.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/data/pokemon.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/lib/dailyPokemon.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/lib/pokemonLabels.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/lib/storage.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/scripts/generatePokemonData.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/home/darlo/WebstormProjects/PokeSoundle" value="3HnD1HWqZQpInIYsc15z8ii4JPp" />
+    </persistenceIdMap>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="252" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0877778047336248" />
+      <entry key="MS500" value="1.6147194336274682" />
+      <entry key="S2" value="1.886109810883968" />
+      <entry key="S5" value="2.0055892251930008" />
+      <entry key="S10" value="2.2071026325972056" />
+      <entry key="S30" value="3.0518374275171696" />
+      <entry key="S60" value="4.9956816932321875" />
+      <entry key="M2" value="7.827513958484772" />
+      <entry key="M5" value="11.281700282052801" />
+      <entry key="M10" value="15.121076870573019" />
+      <entry key="M15" value="19.25507608976049" />
+      <entry key="M30" value="28.90068641109593" />
+      <entry key="H1" value="38.178163934069715" />
+      <entry key="H2" value="44.71693794376627" />
+      <entry key="H4" value="48.61288655146444" />
+      <entry key="D1" value="52.23207807681155" />
+      <entry key="W1" value="52.88936079051943" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="1.8830252366650887E-130" />
+      <entry key="S10" value="1.3722336759754908E-65" />
+      <entry key="S30" value="2.3986175471518678E-22" />
+      <entry key="S60" value="1.619472629870578E-11" />
+      <entry key="M2" value="4.979848000744979E-6" />
+      <entry key="M5" value="0.012762717722479675" />
+      <entry key="M10" value="0.19053102063029015" />
+      <entry key="M15" value="0.4746719513062808" />
+      <entry key="M30" value="1.189711757199554" />
+      <entry key="H1" value="1.8877863892560613" />
+      <entry key="H2" value="2.379331776965912" />
+      <entry key="H4" value="2.671576640134862" />
+      <entry key="D1" value="2.94256551429055" />
+      <entry key="W1" value="2.9917264640657577" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.38422603129356847" />
+      <entry key="MS500" value="1.2954712904027126" />
+      <entry key="S2" value="1.7833518119240057" />
+      <entry key="S5" value="1.959700405159646" />
+      <entry key="S10" value="2.1795197081226396" />
+      <entry key="S30" value="3.039349222241884" />
+      <entry key="S60" value="4.988482425594487" />
+      <entry key="M2" value="7.823511732735224" />
+      <entry key="M5" value="11.292653953361773" />
+      <entry key="M10" value="15.310249540302973" />
+      <entry key="M15" value="19.72837336834472" />
+      <entry key="M30" value="30.089113261179026" />
+      <entry key="H1" value="40.065012173168945" />
+      <entry key="H2" value="47.09569567686423" />
+      <entry key="H4" value="51.28414482657577" />
+      <entry key="D1" value="55.1745856726401" />
+      <entry key="W1" value="55.88107885443804" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3Hn1zZpxWzeF1DRuzOO0zm6mvlY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "master",
+    "javascript.preferred.runtime.type.id": "node",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.jshint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.jshint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "/home/darlo/WebstormProjects/PokeSoundle/node_modules/typescript/lib"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pokesoundle/public" />
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-WS-262.9437.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="" />
+      <created>1778540382555</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778540382555</updated>
+      <workItem from="1786489282911" duration="291000" />
+      <workItem from="1786489809435" duration="4998000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
