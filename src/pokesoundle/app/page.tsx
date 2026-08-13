@@ -1,6 +1,7 @@
 import PokeSoundleGame from "@/components/PokeSoundleGame";
 import HowToPlay from "@/components/HowToPlay";
 import GameInfo from "@/components/GameInfo";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -36,6 +37,30 @@ export default function Home() {
                   <span className="text-xs font-black uppercase tracking-[0.2em] text-white">
                     Gen IV
                   </span>
+                  <Link
+                      href="/sounds"
+                      aria-label="Biblioteca de sonidos"
+                      title="Biblioteca de sonidos"
+                      className="
+                        flex
+                        h-10
+                        w-10
+                        items-center
+                        justify-center
+                        rounded-full
+                        border-2
+                        border-zinc-950
+                        bg-green-400
+                        text-lg
+                        shadow-[0_3px_0_#18181b]
+                        transition
+                        hover:bg-green-300
+                        active:translate-y-[3px]
+                        active:shadow-none
+                      "
+                      >
+                      ♪
+                  </Link>
                   <GameInfo />
                   <HowToPlay />
                 </div>
