@@ -29,9 +29,6 @@ export default function Home() {
               </div>
             </header>
 
-            <div className="mt-4 flex justify-center">
-              <GenerationSelector />
-            </div>
 
             {/* Consola / Pokédex */}
             <div className="overflow-hidden rounded-[2rem] border-4 border-zinc-950 bg-zinc-100 shadow-2xl">
@@ -92,6 +89,10 @@ export default function Home() {
                   <GameInfo />
                   <HowToPlay />
                 </div>
+              </div>
+
+              <div className="mt-4 flex justify-center">
+                <GenerationSelector />
               </div>
 
               {/* Zona de juego */}
