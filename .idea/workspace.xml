@@ -8,8 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy-pages.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy-pages.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/HowToPlay.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/components/PokeSoundleGame.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/components/PokeSoundleGame.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +25,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="252" />
+    <option name="cachedIndexableFilesCount" value="509" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -42,60 +45,60 @@
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000058253894937" />
-      <entry key="S2" value="1.1067755257321266" />
-      <entry key="S5" value="1.787179821378888" />
-      <entry key="S10" value="2.5358176526337237" />
-      <entry key="S30" value="3.399592098604795" />
-      <entry key="S60" value="3.683180281735843" />
-      <entry key="M2" value="3.8784256775728645" />
-      <entry key="M5" value="5.49531060823036" />
-      <entry key="M10" value="10.2026747196255" />
-      <entry key="M15" value="15.100502240265914" />
-      <entry key="M30" value="27.05018193417534" />
-      <entry key="H1" value="39.865246395575156" />
-      <entry key="H2" value="49.6853305460849" />
-      <entry key="H4" value="55.829948024176325" />
-      <entry key="D1" value="61.72620873361446" />
-      <entry key="W1" value="62.81599300508174" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0000000068630641" />
+      <entry key="S5" value="1.0005427592392033" />
+      <entry key="S10" value="1.0232971938053341" />
+      <entry key="S30" value="1.2856065792734923" />
+      <entry key="S60" value="1.535361714781471" />
+      <entry key="M2" value="1.7930074136389371" />
+      <entry key="M5" value="2.932708752837364" />
+      <entry key="M10" value="6.400074965786255" />
+      <entry key="M15" value="10.657858296734823" />
+      <entry key="M30" value="22.510014028096073" />
+      <entry key="H1" value="36.72011322938781" />
+      <entry key="H2" value="48.37006588829585" />
+      <entry key="H4" value="55.93558343199146" />
+      <entry key="D1" value="63.3721564187107" />
+      <entry key="W1" value="64.7643955434338" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="3.9713801740781644E-5" />
-      <entry key="MS500" value="0.13176142791134224" />
-      <entry key="S2" value="0.6024861574973931" />
-      <entry key="S5" value="0.8165425660513088" />
-      <entry key="S10" value="0.9036274487040048" />
-      <entry key="S30" value="0.9667847803225419" />
-      <entry key="S60" value="0.9832521448349564" />
-      <entry key="M2" value="0.991590722930324" />
-      <entry key="M5" value="0.9976276439551137" />
-      <entry key="M10" value="1.0516420873798156" />
-      <entry key="M15" value="1.2019834935448785" />
-      <entry key="M30" value="1.777669699118716" />
-      <entry key="H1" value="2.5265344098433244" />
-      <entry key="H2" value="3.139652997114266" />
-      <entry key="H4" value="3.5334598595122344" />
-      <entry key="D1" value="3.9166487916269674" />
-      <entry key="W1" value="3.9879479741894555" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="9.306392250172063E-108" />
+      <entry key="S5" value="2.0982317998728806E-43" />
+      <entry key="S10" value="6.338324552991167E-22" />
+      <entry key="S30" value="1.3567062914024603E-7" />
+      <entry key="S60" value="5.205725502856816E-4" />
+      <entry key="M2" value="0.03226163632517792" />
+      <entry key="M5" value="0.38396547598449887" />
+      <entry key="M10" value="0.899409724128547" />
+      <entry key="M15" value="1.2705695824850778" />
+      <entry key="M30" value="2.1095910769855473" />
+      <entry key="H1" value="3.073100283448252" />
+      <entry key="H2" value="3.8642920382796038" />
+      <entry key="H4" value="4.380066478717258" />
+      <entry key="D1" value="4.8885199452751475" />
+      <entry key="W1" value="4.983861184599531" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.10083022621150999" />
-      <entry key="MS500" value="0.6549149229264545" />
-      <entry key="S2" value="1.3855977636899746" />
-      <entry key="S5" value="2.4227480917135567" />
-      <entry key="S10" value="3.3362455905072377" />
-      <entry key="S30" value="4.328498236484708" />
-      <entry key="S60" value="4.647005223869547" />
-      <entry key="M2" value="4.860157599804573" />
-      <entry key="M5" value="6.488656067514397" />
-      <entry key="M10" value="11.251653165943727" />
-      <entry key="M15" value="16.300274520556425" />
-      <entry key="M30" value="28.826123841937587" />
-      <entry key="H1" value="42.390552752714115" />
-      <entry key="H2" value="52.82422517431012" />
-      <entry key="H4" value="59.36298289366041" />
-      <entry key="D1" value="65.64277931032535" />
-      <entry key="W1" value="66.80392961001778" />
+      <entry key="MS100" value="0.22067574907266369" />
+      <entry key="MS500" value="0.739181215636921" />
+      <entry key="S2" value="0.9272305501069199" />
+      <entry key="S5" value="0.9706534839171778" />
+      <entry key="S10" value="1.005560360737718" />
+      <entry key="S30" value="1.2689164240489537" />
+      <entry key="S60" value="1.5223192811548782" />
+      <entry key="M2" value="1.815829024553978" />
+      <entry key="M5" value="3.3095834917563947" />
+      <entry key="M10" value="7.293720169448619" />
+      <entry key="M15" value="11.92355509109857" />
+      <entry key="M30" value="24.616147962865867" />
+      <entry key="H1" value="39.790965363446816" />
+      <entry key="H2" value="52.23303184503809" />
+      <entry key="H4" value="60.314922556199065" />
+      <entry key="D1" value="68.26054470785006" />
+      <entry key="W1" value="69.74823764237624" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -122,31 +125,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "main",
-    "javascript.preferred.runtime.type.id": "node",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.jshint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.jshint": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "/home/darlo/WebstormProjects/PokeSoundle/node_modules/typescript/lib"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/home/darlo/WebstormProjects/PokeSoundle/node_modules/typescript/lib&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/pokesoundle/public" />
@@ -169,7 +172,8 @@
       <updated>1778540382555</updated>
       <workItem from="1786489282911" duration="291000" />
       <workItem from="1786489809435" duration="4998000" />
-      <workItem from="1786571529620" duration="2093000" />
+      <workItem from="1786571529620" duration="3333000" />
+      <workItem from="1786648177141" duration="1141000" />
     </task>
     <servers />
   </component>
