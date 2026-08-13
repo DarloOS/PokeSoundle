@@ -7,8 +7,9 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="supabase and leaderboard added">
-      <change beforePath="$PROJECT_DIR$/src/pokesoundle/components/DailyLeaderboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/components/DailyLeaderboard.tsx" afterDir="false" />
+    <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="visual update">
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/app/icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,6 +153,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pokesoundle/app" />
       <recent name="$PROJECT_DIR$/src/pokesoundle/public" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
@@ -173,7 +175,7 @@
       <workItem from="1786489282911" duration="291000" />
       <workItem from="1786489809435" duration="4998000" />
       <workItem from="1786571529620" duration="3333000" />
-      <workItem from="1786648177141" duration="3679000" />
+      <workItem from="1786648177141" duration="4790000" />
     </task>
     <task id="LOCAL-00001" summary="mejora visual">
       <option name="closed" value="true" />
@@ -199,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1786651693252</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="visual update">
+      <option name="closed" value="true" />
+      <created>1786651876057</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1786651876057</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,6 +219,7 @@
     <MESSAGE value="mejora visual" />
     <MESSAGE value="página de información añadida" />
     <MESSAGE value="supabase and leaderboard added" />
-    <option name="LAST_COMMIT_MESSAGE" value="supabase and leaderboard added" />
+    <MESSAGE value="visual update" />
+    <option name="LAST_COMMIT_MESSAGE" value="visual update" />
   </component>
 </project>
