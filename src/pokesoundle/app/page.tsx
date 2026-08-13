@@ -1,5 +1,6 @@
 import PokeSoundleGame from "@/components/PokeSoundleGame";
 import HowToPlay from "@/components/HowToPlay";
+import GameInfo from "@/components/GameInfo";
 
 export default function Home() {
   return (
@@ -31,12 +32,13 @@ export default function Home() {
                   <span className="h-3 w-3 rounded-full border-2 border-zinc-950 bg-yellow-300" />
                   <span className="h-3 w-3 rounded-full border-2 border-zinc-950 bg-green-400" />
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <span className="text-xs font-black uppercase tracking-[0.2em] text-white">
                     Gen IV
                   </span>
+                  <GameInfo />
+                  <HowToPlay />
                 </div>
-                <HowToPlay />
               </div>
 
               {/* Zona de juego */}
