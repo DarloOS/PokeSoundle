@@ -1,16 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import type { FormEvent } from "react";
+
 import {
+  type FormEvent,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 
-import { pokemon, type Pokemon } from "@/data/pokemon";
+import {
+  getPokemonByGeneration,
+  type Pokemon,
+} from "@/data/pokemon";
+
+import {
+  getGeneration,
+} from "@/data/generations";
+
+import {
+  useGeneration,
+} from "@/components/GenerationProvider";
+
+import GuessCell from "@/components/GuessCell";
 import DailyLeaderboard from "@/components/DailyLeaderboard";
+import NextPokemonCountdown from "@/components/NextPokemonCountdown";
+
 import {
   getDailyPokemon,
   getPokeSoundleNumber,
@@ -26,159 +42,379 @@ import {
   getTypeName,
 } from "@/lib/pokemonLabels";
 
-import GuessCell from "@/components/GuessCell";
-import NextPokemonCountdown from "@/components/NextPokemonCountdown";
 
 export default function PokeSoundleGame() {
-  // ==================================================
-  // POKÉMON DEL DÍA
-  // ==================================================
-
-  const answer = getDailyPokemon();
-  const gameNumber = getPokeSoundleNumber();
 
   // ==================================================
-  // AUDIO
+  // GENERACIÓN
   // ==================================================
 
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const {
+    generation,
+  } = useGeneration();
+
+
+  const generationConfig =
+      getGeneration(
+          generation
+      );
+
+
+  const generationPokemon =
+      useMemo(
+          () =>
+              getPokemonByGeneration(
+                  generation
+              ),
+          [generation]
+      );
+
+
+  // ==================================================
+  // RETO DIARIO
+  // ==================================================
+
+  const gameNumber =
+      getPokeSoundleNumber(
+          generation
+      );
+
+
+  const answer =
+      getDailyPokemon(
+          generation
+      );
+
+
+  /*
+   * Nos permite saber exactamente qué partida
+   * está cargada en memoria.
+   *
+   * Ejemplos:
+   *
+   * 4-2 -> Gen IV, PokeSoundle #2
+   * 1-7 -> Gen I, PokeSoundle #7
+   */
+  const currentGameKey =
+      `${generation}-${gameNumber}`;
+
 
   // ==================================================
   // ESTADO
   // ==================================================
 
-  const [query, setQuery] = useState("");
+  const [
+    query,
+    setQuery,
+  ] =
+      useState("");
 
-  const [selectedPokemon, setSelectedPokemon] =
-      useState<Pokemon | null>(null);
 
-  const [guesses, setGuesses] =
+  const [
+    selectedPokemon,
+    setSelectedPokemon,
+  ] =
+      useState<Pokemon | null>(
+          null
+      );
+
+
+  const [
+    guesses,
+    setGuesses,
+  ] =
       useState<Pokemon[]>([]);
 
-  const [error, setError] = useState("");
 
-  const [completed, setCompleted] =
+  const [
+    completed,
+    setCompleted,
+  ] =
       useState(false);
 
-  const [isLoaded, setIsLoaded] =
-      useState(false);
 
-  // ID del intento que acabamos de hacer.
-  // Sirve para animar únicamente esa fila.
-  const [latestGuessId, setLatestGuessId] =
-      useState<number | null>(null);
+  const [
+    error,
+    setError,
+  ] =
+      useState("");
+
+
+  /*
+   * Pokémon correspondiente al último intento.
+   * Se utiliza para animar solamente la fila nueva.
+   */
+  const [
+    latestGuessId,
+    setLatestGuessId,
+  ] =
+      useState<number | null>(
+          null
+      );
+
+
+  /*
+   * Partida que ya ha sido cargada desde localStorage.
+   *
+   * Esto evita guardar accidentalmente los intentos
+   * de una generación dentro de otra al cambiar
+   * el selector.
+   */
+  const [
+    loadedGameKey,
+    setLoadedGameKey,
+  ] =
+      useState<string | null>(
+          null
+      );
+
+
+  const audioRef =
+      useRef<HTMLAudioElement>(
+          null
+      );
+
 
   // ==================================================
   // CARGAR PARTIDA
   // ==================================================
 
   useEffect(() => {
-    const savedGame = loadGame(gameNumber);
+
+    /*
+     * Marcamos temporalmente que todavía no tenemos
+     * cargada la nueva partida.
+     */
+    setLoadedGameKey(
+        null
+    );
+
+
+    const savedGame =
+        loadGame(
+            generation,
+            gameNumber
+        );
+
+
+    let loadedGuesses:
+        Pokemon[] = [];
+
+
+    let loadedCompleted =
+        false;
+
 
     if (savedGame) {
-      const savedGuesses = savedGame.guesses
-          .map((id) =>
-              pokemon.find((item) => item.id === id)
-          )
-          .filter(
-              (item): item is Pokemon =>
-                  item !== undefined
-          );
 
-      setGuesses(savedGuesses);
+      loadedGuesses =
+          savedGame.guesses
+              .map((id) =>
+                  generationPokemon.find(
+                      (item) =>
+                          item.id === id
+                  )
+              )
+              .filter(
+                  (
+                      item
+                  ): item is Pokemon =>
+                      item !== undefined
+              );
 
-      const hasCorrectAnswer =
-          savedGuesses.some(
-              (guess) =>
-                  guess.id === answer.id
-          );
 
-      setCompleted(
+      /*
+       * No confiamos únicamente en "completed".
+       *
+       * Comprobamos que realmente exista el Pokémon
+       * correcto entre los intentos guardados.
+       */
+      loadedCompleted =
           savedGame.completed &&
-          hasCorrectAnswer
-      );
+          loadedGuesses.some(
+              (guess) =>
+                  guess.id ===
+                  answer.id
+          );
     }
 
-    // Los intentos cargados no deben animarse.
-    setLatestGuessId(null);
 
-    setIsLoaded(true);
-  }, [gameNumber, answer.id]);
+    setGuesses(
+        loadedGuesses
+    );
+
+    setCompleted(
+        loadedCompleted
+    );
+
+    setQuery("");
+
+    setSelectedPokemon(
+        null
+    );
+
+    setError("");
+
+    setLatestGuessId(
+        null
+    );
+
+
+    /*
+     * A partir de aquí ya podemos permitir
+     * que el efecto de guardado funcione.
+     */
+    setLoadedGameKey(
+        currentGameKey
+    );
+
+  }, [
+    generation,
+    gameNumber,
+    answer.id,
+    generationPokemon,
+    currentGameKey,
+  ]);
+
 
   // ==================================================
   // GUARDAR PARTIDA
   // ==================================================
 
   useEffect(() => {
-    if (!isLoaded) {
+
+    /*
+     * Si acabamos de cambiar de generación y aún
+     * no hemos cargado su partida, no guardamos nada.
+     */
+    if (
+        loadedGameKey !==
+        currentGameKey
+    ) {
       return;
     }
 
-    saveGame(gameNumber, {
-      guesses: guesses.map(
-          (guess) => guess.id
-      ),
-      completed,
-    });
+
+    saveGame(
+        generation,
+        gameNumber,
+        {
+          guesses:
+              guesses.map(
+                  (guess) =>
+                      guess.id
+              ),
+
+          completed,
+        }
+    );
+
   }, [
+    generation,
+    gameNumber,
     guesses,
     completed,
-    gameNumber,
-    isLoaded,
+    loadedGameKey,
+    currentGameKey,
   ]);
+
 
   // ==================================================
   // AUTOCOMPLETADO
   // ==================================================
 
-  const suggestions = useMemo(() => {
-    const search =
-        query.trim().toLowerCase();
+  const suggestions =
+      useMemo(() => {
 
-    if (!search || completed) {
-      return [];
-    }
+        const search =
+            query
+                .trim()
+                .toLowerCase();
 
-    return pokemon
-        .filter((item) =>
-            item.name
-                .toLowerCase()
-                .startsWith(search)
-        )
-        .filter(
-            (item) =>
-                !guesses.some(
-                    (guess) =>
-                        guess.id === item.id
-                )
-        )
-        .slice(0, 8);
-  }, [
-    query,
-    guesses,
-    completed,
-  ]);
+
+        if (
+            !search ||
+            completed
+        ) {
+          return [];
+        }
+
+
+        return generationPokemon
+
+            /*
+             * Solo nombres que EMPIECEN por lo escrito.
+             *
+             * "lu":
+             * Luxio
+             * Luxray
+             * Lucario
+             * Lumineon
+             */
+            .filter(
+                (item) =>
+                    item.name
+                        .toLowerCase()
+                        .startsWith(
+                            search
+                        )
+            )
+
+            /*
+             * No mostramos Pokémon que ya hayan
+             * sido utilizados.
+             */
+            .filter(
+                (item) =>
+                    !guesses.some(
+                        (guess) =>
+                            guess.id ===
+                            item.id
+                    )
+            )
+
+            .slice(
+                0,
+                8
+            );
+
+      }, [
+        query,
+        guesses,
+        completed,
+        generationPokemon,
+      ]);
+
 
   // ==================================================
-  // REPRODUCIR GRITO
+  // REPRODUCIR CRY
   // ==================================================
 
   function playCry() {
-    if (!audioRef.current) {
+
+    if (
+        !audioRef.current
+    ) {
       return;
     }
 
-    audioRef.current.currentTime = 0;
+
+    audioRef.current.currentTime =
+        0;
+
 
     audioRef.current
         .play()
-        .catch((error) => {
-          console.error(
-              "No se pudo reproducir el audio:",
-              error
-          );
-        });
+        .catch(
+            (playError) => {
+              console.error(
+                  "No se pudo reproducir el audio:",
+                  playError
+              );
+            }
+        );
   }
+
 
   // ==================================================
   // BUSCADOR
@@ -187,55 +423,89 @@ export default function PokeSoundleGame() {
   function handleInputChange(
       value: string
   ) {
-    setQuery(value);
-    setSelectedPokemon(null);
+
+    setQuery(
+        value
+    );
+
+    setSelectedPokemon(
+        null
+    );
+
     setError("");
   }
 
-  function handleSelect(
+
+  function handleSelectPokemon(
       item: Pokemon
   ) {
-    setQuery(item.name);
-    setSelectedPokemon(item);
+
+    setQuery(
+        item.name
+    );
+
+    setSelectedPokemon(
+        item
+    );
+
     setError("");
   }
+
 
   // ==================================================
   // ENVIAR INTENTO
   // ==================================================
 
   function handleSubmit(
-      event: FormEvent<HTMLFormElement>
+      event:
+      FormEvent<HTMLFormElement>
   ) {
+
     event.preventDefault();
+
 
     if (completed) {
       return;
     }
 
+
+    /*
+     * Puede haber sido seleccionado desde el
+     * autocompletado o escrito manualmente.
+     */
     const exactMatch =
         selectedPokemon ??
-        pokemon.find(
+        generationPokemon.find(
             (item) =>
-                item.name.toLowerCase() ===
-                query.trim().toLowerCase()
+                item.name
+                    .toLowerCase() ===
+                query
+                    .trim()
+                    .toLowerCase()
         );
 
+
     if (!exactMatch) {
+
       setError(
-          "Selecciona un Pokémon válido de cuarta generación."
+          `Selecciona un Pokémon válido de ${generationConfig.label}.`
       );
 
       return;
     }
 
-    const alreadyGuessed =
+
+    /*
+     * Evitamos intentos repetidos.
+     */
+    if (
         guesses.some(
             (guess) =>
-                guess.id === exactMatch.id
-        );
+                guess.id ===
+                exactMatch.id
+        )
+    ) {
 
-    if (alreadyGuessed) {
       setError(
           "Ya has probado ese Pokémon."
       );
@@ -243,8 +513,11 @@ export default function PokeSoundleGame() {
       return;
     }
 
-    // Este será el único intento animado.
-    setLatestGuessId(exactMatch.id);
+
+    setLatestGuessId(
+        exactMatch.id
+    );
+
 
     setGuesses(
         (currentGuesses) => [
@@ -253,55 +526,133 @@ export default function PokeSoundleGame() {
         ]
     );
 
+
     if (
-        exactMatch.id === answer.id
+        exactMatch.id ===
+        answer.id
     ) {
-      setCompleted(true);
+      setCompleted(
+          true
+      );
     }
 
+
     setQuery("");
-    setSelectedPokemon(null);
+
+    setSelectedPokemon(
+        null
+    );
+
     setError("");
   }
 
+
   // ==================================================
-  // CARGANDO
+  // CAMBIO DE GENERACIÓN / CARGANDO
   // ==================================================
 
-  if (!isLoaded) {
+  /*
+   * Evita que al cambiar de generación se vea durante
+   * unas décimas la partida de la generación anterior.
+   *
+   * También evita que DailyLeaderboard pueda montarse
+   * accidentalmente con los intentos antiguos.
+   */
+  if (
+      loadedGameKey !==
+      currentGameKey
+  ) {
     return (
-        <section className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-zinc-500">
-            Cargando partida...
-          </p>
-        </section>
+        <div
+            className="
+          py-20
+          text-center
+          text-sm
+          font-semibold
+          text-zinc-500
+        "
+        >
+          Cargando reto...
+        </div>
     );
   }
+
 
   // ==================================================
   // INTERFAZ
   // ==================================================
 
   return (
-      <section className="flex flex-1 flex-col">
+      <section
+          className="
+        flex
+        flex-col
+      "
+      >
 
         {/* ============================================== */}
-        {/* ZONA CENTRAL */}
+        {/* INFORMACIÓN DEL RETO */}
         {/* ============================================== */}
 
-        <div className="mx-auto w-full max-w-md">
+        <div
+            className="
+          mb-6
+          text-center
+        "
+        >
 
-          {/* Número diario */}
+          <p
+              className="
+            text-sm
+            font-black
+            uppercase
+            tracking-[0.15em]
+            text-blue-700
+          "
+          >
+            {generationConfig.shortLabel}
+            {" · "}
+            {generationConfig.region}
+          </p>
 
-          <p className="mb-6 text-center text-sm font-medium text-zinc-500">
+
+          <p
+              className="
+            mt-1
+            text-sm
+            font-semibold
+            text-zinc-500
+          "
+          >
             PokeSoundle #{gameNumber}
           </p>
 
+        </div>
+
+
+        {/* ============================================== */}
+        {/* JUEGO */}
+        {/* ============================================== */}
+
+        <div
+            className="
+          mx-auto
+          w-full
+          max-w-md
+        "
+        >
+
           {/* ============================================ */}
-          {/* REPRODUCTOR / POKÉ BALL */}
+          {/* AUDIO */}
           {/* ============================================ */}
 
-          <div className="mb-10 flex justify-center">
+          <div
+              className="
+            mb-10
+            flex
+            justify-center
+          "
+          >
 
             <audio
                 ref={audioRef}
@@ -309,14 +660,19 @@ export default function PokeSoundleGame() {
                 preload="auto"
             />
 
+
             <button
                 type="button"
                 onClick={playCry}
                 className="pokeball-button"
                 aria-label="Reproducir grito del Pokémon"
             >
-            <span className="pokeball-center">
-              <span className="pokeball-play">
+            <span
+                className="pokeball-center"
+            >
+              <span
+                  className="pokeball-play"
+              >
                 ▶
               </span>
             </span>
@@ -324,28 +680,49 @@ export default function PokeSoundleGame() {
 
           </div>
 
+
           {/* ============================================ */}
-          {/* PARTIDA ACTIVA */}
+          {/* BUSCADOR */}
           {/* ============================================ */}
 
-          {!completed ? (
+          {!completed && (
               <>
-                <h2 className="mb-4 text-center text-xl font-semibold">
+
+                <h2
+                    className="
+                mb-4
+                text-center
+                text-xl
+                font-semibold
+                text-zinc-900
+              "
+                >
                   ¿Qué Pokémon es?
                 </h2>
 
-                <form onSubmit={handleSubmit}>
 
-                  {/* BUSCADOR */}
+                <form
+                    onSubmit={
+                      handleSubmit
+                    }
+                >
 
-                  <div className="relative">
+                  <div
+                      className="
+                  relative
+                "
+                  >
 
                     <input
                         type="text"
                         value={query}
-                        onChange={(event) =>
+                        onChange={(
+                            event
+                        ) =>
                             handleInputChange(
-                                event.target.value
+                                event
+                                    .target
+                                    .value
                             )
                         }
                         placeholder="Buscar Pokémon..."
@@ -367,18 +744,23 @@ export default function PokeSoundleGame() {
                   "
                     />
 
+
+                    {/* ==================================== */}
                     {/* SUGERENCIAS */}
+                    {/* ==================================== */}
 
                     {query &&
                         !selectedPokemon &&
-                        suggestions.length > 0 && (
+                        suggestions.length >
+                        0 && (
+
                             <div
                                 className="
                         absolute
                         left-0
                         right-0
                         top-[calc(100%+0.5rem)]
-                        z-20
+                        z-30
                         max-h-80
                         overflow-y-auto
                         rounded-xl
@@ -388,13 +770,19 @@ export default function PokeSoundleGame() {
                         shadow-xl
                       "
                             >
+
                               {suggestions.map(
                                   (item) => (
+
                                       <button
-                                          key={item.id}
+                                          key={
+                                            item.id
+                                          }
                                           type="button"
                                           onClick={() =>
-                                              handleSelect(item)
+                                              handleSelectPokemon(
+                                                  item
+                                              )
                                           }
                                           className="
                               flex
@@ -413,7 +801,13 @@ export default function PokeSoundleGame() {
                             "
                                       >
 
-                                        <div className="flex items-center gap-3">
+                                        <div
+                                            className="
+                                flex
+                                items-center
+                                gap-3
+                              "
+                                        >
 
                                           <div
                                               className="
@@ -429,42 +823,77 @@ export default function PokeSoundleGame() {
                                   bg-zinc-950
                                 "
                                           >
+
                                             <Image
-                                                src={item.sprite}
-                                                alt={item.name}
+                                                src={
+                                                  item.sprite
+                                                }
+                                                alt={
+                                                  item.name
+                                                }
                                                 width={56}
                                                 height={56}
-                                                className="[image-rendering:pixelated]"
+                                                className="
+                                    [image-rendering:pixelated]
+                                  "
                                             />
+
                                           </div>
 
-                                          <span className="font-medium text-white">
+
+                                          <span
+                                              className="
+                                  font-medium
+                                  text-white
+                                "
+                                          >
                                 {item.name}
                               </span>
 
                                         </div>
 
-                                        <span className="text-xs font-medium text-zinc-400">
+
+                                        <span
+                                            className="
+                                text-xs
+                                text-zinc-400
+                              "
+                                        >
                               #{item.id}
                             </span>
 
                                       </button>
+
                                   )
                               )}
+
                             </div>
+
                         )}
 
                   </div>
 
+
                   {/* ERROR */}
 
                   {error && (
-                      <p className="mt-3 text-center text-sm text-red-500">
+
+                      <p
+                          className="
+                    mt-3
+                    text-center
+                    text-sm
+                    font-semibold
+                    text-red-600
+                  "
+                      >
                         {error}
                       </p>
+
                   )}
 
-                  {/* ADIVINAR */}
+
+                  {/* BOTÓN */}
 
                   <button
                       type="submit"
@@ -490,12 +919,16 @@ export default function PokeSoundleGame() {
                   </button>
 
                 </form>
-              </>
-          ) : (
 
-              /* ========================================== */
-              /* VICTORIA */
-              /* ========================================== */
+              </>
+          )}
+
+
+          {/* ============================================ */}
+          {/* VICTORIA */}
+          {/* ============================================ */}
+
+          {completed && (
 
               <div
                   className="
@@ -508,92 +941,186 @@ export default function PokeSoundleGame() {
             "
               >
 
-                <p className="text-4xl text-green-600">
+                <p
+                    className="
+                text-4xl
+                text-green-600
+              "
+                >
                   ✓
                 </p>
 
-                <h2 className="mt-3 text-2xl font-black text-zinc-950">
+
+                <h2
+                    className="
+                mt-3
+                text-2xl
+                font-black
+              "
+                >
                   ¡Correcto!
                 </h2>
 
-                <p className="mt-4 text-3xl font-black text-zinc-950">
+
+                <p
+                    className="
+                mt-3
+                text-3xl
+                font-black
+              "
+                >
                   {answer.name}
                 </p>
 
+
                 <Image
-                    src={answer.sprite}
-                    alt={`Sprite de ${answer.name}`}
+                    src={
+                      answer.sprite
+                    }
+                    alt={
+                      answer.name
+                    }
                     width={160}
                     height={160}
                     className="
                 mx-auto
-                mt-4
+                mt-3
                 [image-rendering:pixelated]
               "
                 />
 
-                <p className="mt-1 text-sm text-zinc-500">
+
+                <p
+                    className="
+                text-sm
+                text-zinc-500
+              "
+                >
                   #{answer.id}
                 </p>
 
-                <p className="mt-5 text-zinc-700">
+
+                <p
+                    className="
+                mt-4
+                text-zinc-700
+              "
+                >
                   Lo has acertado en{" "}
+
                   <strong>
                     {guesses.length}{" "}
-                    {guesses.length === 1
+                    {guesses.length ===
+                    1
                         ? "intento"
                         : "intentos"}
                   </strong>
                 </p>
 
-                <DailyLeaderboard
-                    gameNumber={gameNumber}
-                    attempts={guesses.length}
-                />
 
-                <NextPokemonCountdown />
+                {/* LEADERBOARD */}
+
+                <div
+                    className="
+                mt-8
+              "
+                >
+                  <DailyLeaderboard
+                      generation={
+                        generation
+                      }
+                      gameNumber={
+                        gameNumber
+                      }
+                      attempts={
+                        guesses.length
+                      }
+                  />
+                </div>
+
+
+                {/* CUENTA ATRÁS */}
+
+                <div
+                    className="
+                mt-6
+              "
+                >
+                  <NextPokemonCountdown />
+                </div>
 
               </div>
+
           )}
 
         </div>
 
+
         {/* ============================================== */}
-        {/* HISTORIAL */}
+        {/* INTENTOS */}
         {/* ============================================== */}
 
-        <div className="mt-10 w-full">
+        <div
+            className="
+          mt-10
+          w-full
+        "
+        >
 
-          <p className="mb-5 text-center text-sm text-zinc-500">
+          <p
+              className="
+            mb-4
+            text-center
+            text-sm
+            text-zinc-500
+          "
+          >
             Intentos: {guesses.length}
           </p>
 
-          {guesses.length > 0 && (
-              <>
 
-                {/* Aviso móvil */}
+          {guesses.length >
+              0 && (
+                  <>
 
-                <p className="mb-3 text-center text-xs text-zinc-500 sm:hidden">
-                  ← Desliza para ver todas las pistas →
-                </p>
+                    {/* AVISO MÓVIL */}
 
-                <div className="overflow-x-auto pb-3">
+                    <p
+                        className="
+                mb-3
+                text-center
+                text-xs
+                font-semibold
+                text-zinc-500
+                sm:hidden
+              "
+                    >
+                      ← Desliza para ver todas las pistas →
+                    </p>
 
-                  <div
-                      className="
+
+                    <div
+                        className="
+                overflow-x-auto
+                pb-3
+              "
+                    >
+
+                      <div
+                          className="
                   mx-auto
                   min-w-[590px]
                   max-w-4xl
                   sm:min-w-[720px]
                 "
-                  >
+                      >
 
-                    {/* ==================================== */}
-                    {/* CABECERAS */}
-                    {/* ==================================== */}
+                        {/* ==================================== */}
+                        {/* CABECERA */}
+                        {/* ==================================== */}
 
-                    <div
-                        className="
+                        <div
+                            className="
                     mb-2
                     grid
                     grid-cols-7
@@ -603,13 +1130,13 @@ export default function PokeSoundleGame() {
                     font-bold
                     text-zinc-600
                   "
-                    >
+                        >
 
                   <span
                       className="
                       sticky
                       left-0
-                      z-10
+                      z-20
                       bg-zinc-100
                       sm:static
                     "
@@ -617,366 +1144,394 @@ export default function PokeSoundleGame() {
                     Pokémon
                   </span>
 
-                      <span>Tipo 1</span>
-                      <span>Tipo 2</span>
-                      <span>Color</span>
-                      <span>Etapa</span>
-                      <span>Altura</span>
-                      <span>Peso</span>
+                          <span>
+                    Tipo 1
+                  </span>
 
-                    </div>
+                          <span>
+                    Tipo 2
+                  </span>
 
-                    {/* ==================================== */}
-                    {/* FILAS */}
-                    {/* ==================================== */}
+                          <span>
+                    Color
+                  </span>
 
-                    <div className="space-y-2">
+                          <span>
+                    Etapa
+                  </span>
 
-                      {[...guesses]
-                          .reverse()
-                          .map((guess) => {
+                          <span>
+                    Altura
+                  </span>
 
-                            const isLatest =
-                                guess.id === latestGuessId;
+                          <span>
+                    Peso
+                  </span>
 
-                            // ------------------------------
-                            // ETAPA
-                            // ------------------------------
+                        </div>
 
-                            const evolutionDirection:
-                                | "up"
-                                | "down"
-                                | undefined =
-                                guess.evolutionStage <
-                                answer.evolutionStage
-                                    ? "up"
-                                    : guess.evolutionStage >
-                                    answer.evolutionStage
-                                        ? "down"
-                                        : undefined;
 
-                            // ------------------------------
-                            // ALTURA
-                            // ------------------------------
+                        {/* ==================================== */}
+                        {/* FILAS */}
+                        {/* ==================================== */}
 
-                            const heightDirection:
-                                | "up"
-                                | "down"
-                                | undefined =
-                                guess.height <
-                                answer.height
-                                    ? "up"
-                                    : guess.height >
-                                    answer.height
-                                        ? "down"
-                                        : undefined;
+                        <div
+                            className="
+                    space-y-2
+                  "
+                        >
 
-                            // ------------------------------
-                            // PESO
-                            // ------------------------------
+                          {[...guesses]
+                              .reverse()
+                              .map(
+                                  (guess) => {
 
-                            const weightDirection:
-                                | "up"
-                                | "down"
-                                | undefined =
-                                guess.weight <
-                                answer.weight
-                                    ? "up"
-                                    : guess.weight >
-                                    answer.weight
-                                        ? "down"
-                                        : undefined;
+                                    /*
+                                     * Solamente el último intento
+                                     * recibe la animación.
+                                     */
+                                    const isLatest =
+                                        guess.id ===
+                                        latestGuessId;
 
-                            return (
-                                <div
-                                    key={guess.id}
-                                    className="
-                            grid
-                            grid-cols-7
-                            gap-2
-                          "
-                                >
 
-                                  {/* ========================== */}
-                                  {/* SPRITE */}
-                                  {/* ========================== */}
+                                    // ==============================
+                                    // DIRECCIONES
+                                    // ==============================
 
-                                  <div
-                                      className={`
-                              ${
-                                          isLatest
-                                              ? "guess-flip"
-                                              : ""
-                                      }
+                                    const evolutionDirection:
+                                        | "up"
+                                        | "down"
+                                        | undefined =
+                                        guess
+                                            .evolutionStage <
+                                        answer
+                                            .evolutionStage
+                                            ? "up"
+                                            : guess
+                                                .evolutionStage >
+                                            answer
+                                                .evolutionStage
+                                                ? "down"
+                                                : undefined;
 
-                              sticky
-                              left-0
-                              z-10
-                              flex
-                              h-16
-                              min-w-16
-                              items-center
-                              justify-center
-                              rounded-lg
-                              border-2
-                              bg-zinc-100
 
-                              sm:static
-                              sm:h-20
-                              sm:min-w-20
-
-                              ${
-                                          guess.id === answer.id
-                                              ? "border-green-500"
-                                              : "border-red-500"
-                                      }
-                            `}
-                                      style={
-                                        isLatest
-                                            ? {
-                                              animationDelay:
-                                                  "0ms",
-                                            }
-                                            : undefined
-                                      }
-                                  >
-                                    <Image
-                                        src={guess.sprite}
-                                        alt={guess.name}
-                                        width={72}
-                                        height={72}
-                                        className="
-                                h-16
-                                w-16
-                                object-contain
-                                [image-rendering:pixelated]
-
-                                sm:h-[72px]
-                                sm:w-[72px]
-                              "
-                                    />
-                                  </div>
-
-                                  {/* ========================== */}
-                                  {/* TIPO 1 */}
-                                  {/* ========================== */}
-
-                                  <div
-                                      className={
-                                        isLatest
-                                            ? "guess-flip"
-                                            : ""
-                                      }
-                                      style={
-                                        isLatest
-                                            ? {
-                                              animationDelay:
-                                                  "80ms",
-                                            }
-                                            : undefined
-                                      }
-                                  >
-                                    <GuessCell
-                                        label={
-                                          getTypeName(
-                                              guess.type1
-                                          )
-                                        }
-                                        correct={
-                                            guess.type1 ===
-                                            answer.type1
-                                        }
-                                        partial={
-                                            guess.type1 !==
-                                            answer.type1 &&
-                                            guess.type1 ===
-                                            answer.type2
-                                        }
-                                    />
-                                  </div>
-
-                                  {/* ========================== */}
-                                  {/* TIPO 2 */}
-                                  {/* ========================== */}
-
-                                  <div
-                                      className={
-                                        isLatest
-                                            ? "guess-flip"
-                                            : ""
-                                      }
-                                      style={
-                                        isLatest
-                                            ? {
-                                              animationDelay:
-                                                  "160ms",
-                                            }
-                                            : undefined
-                                      }
-                                  >
-                                    <GuessCell
-                                        label={
-                                          getTypeName(
-                                              guess.type2
-                                          )
-                                        }
-                                        correct={
-                                            guess.type2 ===
-                                            answer.type2
-                                        }
-                                        partial={
-                                            guess.type2 !== null &&
-                                            guess.type2 !==
-                                            answer.type2 &&
-                                            guess.type2 ===
-                                            answer.type1
-                                        }
-                                    />
-                                  </div>
-
-                                  {/* ========================== */}
-                                  {/* COLOR */}
-                                  {/* ========================== */}
-
-                                  <div
-                                      className={
-                                        isLatest
-                                            ? "guess-flip"
-                                            : ""
-                                      }
-                                      style={
-                                        isLatest
-                                            ? {
-                                              animationDelay:
-                                                  "240ms",
-                                            }
-                                            : undefined
-                                      }
-                                  >
-                                    <GuessCell
-                                        label={
-                                          getColorName(
-                                              guess.color
-                                          )
-                                        }
-                                        correct={
-                                            guess.color ===
-                                            answer.color
-                                        }
-                                    />
-                                  </div>
-
-                                  {/* ========================== */}
-                                  {/* ETAPA */}
-                                  {/* ========================== */}
-
-                                  <div
-                                      className={
-                                        isLatest
-                                            ? "guess-flip"
-                                            : ""
-                                      }
-                                      style={
-                                        isLatest
-                                            ? {
-                                              animationDelay:
-                                                  "320ms",
-                                            }
-                                            : undefined
-                                      }
-                                  >
-                                    <GuessCell
-                                        label={String(
-                                            guess.evolutionStage
-                                        )}
-                                        correct={
-                                            guess.evolutionStage ===
-                                            answer.evolutionStage
-                                        }
-                                        direction={
-                                          evolutionDirection
-                                        }
-                                    />
-                                  </div>
-
-                                  {/* ========================== */}
-                                  {/* ALTURA */}
-                                  {/* ========================== */}
-
-                                  <div
-                                      className={
-                                        isLatest
-                                            ? "guess-flip"
-                                            : ""
-                                      }
-                                      style={
-                                        isLatest
-                                            ? {
-                                              animationDelay:
-                                                  "400ms",
-                                            }
-                                            : undefined
-                                      }
-                                  >
-                                    <GuessCell
-                                        label={`${guess.height.toFixed(
-                                            1
-                                        )} m`}
-                                        correct={
-                                            guess.height ===
+                                    const heightDirection:
+                                        | "up"
+                                        | "down"
+                                        | undefined =
+                                        guess.height <
+                                        answer.height
+                                            ? "up"
+                                            : guess.height >
                                             answer.height
-                                        }
-                                        direction={
-                                          heightDirection
-                                        }
-                                    />
-                                  </div>
+                                                ? "down"
+                                                : undefined;
 
-                                  {/* ========================== */}
-                                  {/* PESO */}
-                                  {/* ========================== */}
 
-                                  <div
-                                      className={
-                                        isLatest
-                                            ? "guess-flip"
-                                            : ""
-                                      }
-                                      style={
-                                        isLatest
-                                            ? {
-                                              animationDelay:
-                                                  "480ms",
-                                            }
-                                            : undefined
-                                      }
-                                  >
-                                    <GuessCell
-                                        label={`${guess.weight.toFixed(
-                                            1
-                                        )} kg`}
-                                        correct={
-                                            guess.weight ===
+                                    const weightDirection:
+                                        | "up"
+                                        | "down"
+                                        | undefined =
+                                        guess.weight <
+                                        answer.weight
+                                            ? "up"
+                                            : guess.weight >
                                             answer.weight
-                                        }
-                                        direction={
-                                          weightDirection
-                                        }
-                                    />
-                                  </div>
+                                                ? "down"
+                                                : undefined;
 
-                                </div>
-                            );
-                          })}
+
+                                    /*
+                                     * Animación escalonada:
+                                     *
+                                     * sprite -> 0ms
+                                     * tipo 1 -> 80ms
+                                     * tipo 2 -> 160ms
+                                     * ...
+                                     */
+                                    function animation(
+                                        delay:
+                                        number
+                                    ) {
+
+                                      if (
+                                          !isLatest
+                                      ) {
+                                        return {};
+                                      }
+
+
+                                      return {
+                                        className:
+                                            "guess-flip",
+
+                                        style: {
+                                          animationDelay:
+                                              `${delay}ms`,
+                                        },
+                                      };
+                                    }
+
+
+                                    return (
+
+                                        <div
+                                            key={
+                                              guess.id
+                                            }
+                                            className="
+                              grid
+                              grid-cols-7
+                              gap-2
+                            "
+                                        >
+
+                                          {/* ======================== */}
+                                          {/* SPRITE */}
+                                          {/* ======================== */}
+
+                                          <div
+                                              {...animation(
+                                                  0
+                                              )}
+                                              className={`
+                                ${animation(0).className ?? ""}
+                                sticky
+                                left-0
+                                z-10
+                                bg-zinc-100
+                                sm:static
+                              `}
+                                          >
+
+                                            <div
+                                                className={`
+                                  flex
+                                  h-16
+                                  min-w-16
+                                  items-center
+                                  justify-center
+                                  rounded-lg
+                                  border-2
+                                  bg-zinc-100
+
+                                  sm:h-20
+                                  sm:min-w-20
+
+                                  ${
+                                                    guess.id ===
+                                                    answer.id
+                                                        ? "border-green-500"
+                                                        : "border-red-500"
+                                                }
+                                `}
+                                            >
+
+                                              <Image
+                                                  src={
+                                                    guess.sprite
+                                                  }
+                                                  alt={
+                                                    guess.name
+                                                  }
+                                                  width={72}
+                                                  height={72}
+                                                  className="
+                                    [image-rendering:pixelated]
+                                  "
+                                              />
+
+                                            </div>
+
+                                          </div>
+
+
+                                          {/* ======================== */}
+                                          {/* TIPO 1 */}
+                                          {/* ======================== */}
+
+                                          <div
+                                              {...animation(
+                                                  80
+                                              )}
+                                          >
+
+                                            <GuessCell
+                                                label={
+                                                  getTypeName(
+                                                      guess.type1
+                                                  )
+                                                }
+                                                correct={
+                                                    guess.type1 ===
+                                                    answer.type1
+                                                }
+                                                partial={
+                                                    guess.type1 !==
+                                                    answer.type1 &&
+                                                    guess.type1 ===
+                                                    answer.type2
+                                                }
+                                            />
+
+                                          </div>
+
+
+                                          {/* ======================== */}
+                                          {/* TIPO 2 */}
+                                          {/* ======================== */}
+
+                                          <div
+                                              {...animation(
+                                                  160
+                                              )}
+                                          >
+
+                                            <GuessCell
+                                                label={
+                                                  getTypeName(
+                                                      guess.type2
+                                                  )
+                                                }
+                                                correct={
+                                                    guess.type2 ===
+                                                    answer.type2
+                                                }
+                                                partial={
+                                                    guess.type2 !==
+                                                    null &&
+                                                    guess.type2 !==
+                                                    answer.type2 &&
+                                                    guess.type2 ===
+                                                    answer.type1
+                                                }
+                                            />
+
+                                          </div>
+
+
+                                          {/* ======================== */}
+                                          {/* COLOR */}
+                                          {/* ======================== */}
+
+                                          <div
+                                              {...animation(
+                                                  240
+                                              )}
+                                          >
+
+                                            <GuessCell
+                                                label={
+                                                  getColorName(
+                                                      guess.color
+                                                  )
+                                                }
+                                                correct={
+                                                    guess.color ===
+                                                    answer.color
+                                                }
+                                            />
+
+                                          </div>
+
+
+                                          {/* ======================== */}
+                                          {/* EVOLUCIÓN */}
+                                          {/* ======================== */}
+
+                                          <div
+                                              {...animation(
+                                                  320
+                                              )}
+                                          >
+
+                                            <GuessCell
+                                                label={
+                                                  String(
+                                                      guess
+                                                          .evolutionStage
+                                                  )
+                                                }
+                                                correct={
+                                                    guess
+                                                        .evolutionStage ===
+                                                    answer
+                                                        .evolutionStage
+                                                }
+                                                direction={
+                                                  evolutionDirection
+                                                }
+                                            />
+
+                                          </div>
+
+
+                                          {/* ======================== */}
+                                          {/* ALTURA */}
+                                          {/* ======================== */}
+
+                                          <div
+                                              {...animation(
+                                                  400
+                                              )}
+                                          >
+
+                                            <GuessCell
+                                                label={`${guess.height.toFixed(
+                                                    1
+                                                )} m`}
+                                                correct={
+                                                    guess.height ===
+                                                    answer.height
+                                                }
+                                                direction={
+                                                  heightDirection
+                                                }
+                                            />
+
+                                          </div>
+
+
+                                          {/* ======================== */}
+                                          {/* PESO */}
+                                          {/* ======================== */}
+
+                                          <div
+                                              {...animation(
+                                                  480
+                                              )}
+                                          >
+
+                                            <GuessCell
+                                                label={`${guess.weight.toFixed(
+                                                    1
+                                                )} kg`}
+                                                correct={
+                                                    guess.weight ===
+                                                    answer.weight
+                                                }
+                                                direction={
+                                                  weightDirection
+                                                }
+                                            />
+
+                                          </div>
+
+                                        </div>
+
+                                    );
+                                  }
+                              )}
+
+                        </div>
+
+                      </div>
 
                     </div>
 
-                  </div>
-
-                </div>
-
-              </>
-          )}
+                  </>
+              )}
 
         </div>
 

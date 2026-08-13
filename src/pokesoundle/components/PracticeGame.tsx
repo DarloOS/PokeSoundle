@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 
-import type { FormEvent } from "react";
-
 import {
+    type FormEvent,
     useEffect,
     useMemo,
     useRef,
@@ -12,9 +11,17 @@ import {
 } from "react";
 
 import {
-    pokemon,
+    getPokemonByGeneration,
     type Pokemon,
 } from "@/data/pokemon";
+
+import {
+    getGeneration,
+} from "@/data/generations";
+
+import {
+    useGeneration,
+} from "@/components/GenerationProvider";
 
 import GuessCell from "@/components/GuessCell";
 
@@ -25,12 +32,13 @@ import {
 
 
 function getRandomPokemon(
+    pokemonList: Pokemon[],
     previousId?: number
 ): Pokemon {
     const availablePokemon =
         previousId === undefined
-            ? pokemon
-            : pokemon.filter(
+            ? pokemonList
+            : pokemonList.filter(
                 (item) =>
                     item.id !== previousId
             );
@@ -46,86 +54,168 @@ function getRandomPokemon(
 
 
 export default function PracticeGame() {
+    // ==================================================
+    // GENERACIÓN
+    // ==================================================
+
+    const {
+        generation,
+    } = useGeneration();
+
+    const generationConfig =
+        getGeneration(
+            generation
+        );
+
+    const generationPokemon =
+        useMemo(
+            () =>
+                getPokemonByGeneration(
+                    generation
+                ),
+            [generation]
+        );
+
 
     // ==================================================
     // ESTADO
     // ==================================================
 
-    const [answer, setAnswer] =
-        useState<Pokemon | null>(null);
+    const [
+        answer,
+        setAnswer,
+    ] =
+        useState<Pokemon | null>(
+            null
+        );
 
-    const [query, setQuery] =
+    const [
+        query,
+        setQuery,
+    ] =
         useState("");
 
     const [
         selectedPokemon,
         setSelectedPokemon,
     ] =
-        useState<Pokemon | null>(null);
+        useState<Pokemon | null>(
+            null
+        );
 
-    const [guesses, setGuesses] =
+    const [
+        guesses,
+        setGuesses,
+    ] =
         useState<Pokemon[]>([]);
 
-    const [completed, setCompleted] =
+    const [
+        completed,
+        setCompleted,
+    ] =
         useState(false);
 
-    const [error, setError] =
+    const [
+        error,
+        setError,
+    ] =
         useState("");
 
     const [
         latestGuessId,
         setLatestGuessId,
     ] =
-        useState<number | null>(null);
+        useState<number | null>(
+            null
+        );
 
     const audioRef =
-        useRef<HTMLAudioElement>(null);
+        useRef<HTMLAudioElement>(
+            null
+        );
 
 
     // ==================================================
-    // PRIMER POKÉMON
+    // CAMBIO DE GENERACIÓN
     // ==================================================
 
     useEffect(() => {
-        setAnswer(getRandomPokemon());
-    }, []);
+        if (
+            generationPokemon.length === 0
+        ) {
+            setAnswer(null);
+            return;
+        }
+
+        /*
+         * Al cambiar de generación empieza
+         * automáticamente una nueva práctica.
+         */
+        setAnswer(
+            getRandomPokemon(
+                generationPokemon
+            )
+        );
+
+        setGuesses([]);
+        setCompleted(false);
+
+        setQuery("");
+        setSelectedPokemon(null);
+
+        setError("");
+        setLatestGuessId(null);
+
+    }, [
+        generationPokemon,
+    ]);
 
 
     // ==================================================
-    // AUTOCOMPLETADO
+    // SUGERENCIAS
     // ==================================================
 
     const suggestions =
         useMemo(() => {
-
             const search =
                 query
                     .trim()
                     .toLowerCase();
 
-            if (!search || completed) {
+            if (
+                !search ||
+                completed
+            ) {
                 return [];
             }
 
-            return pokemon
-                .filter((item) =>
-                    item.name
-                        .toLowerCase()
-                        .startsWith(search)
+            return generationPokemon
+                .filter(
+                    (item) =>
+                        item.name
+                            .toLowerCase()
+                            .startsWith(
+                                search
+                            )
                 )
                 .filter(
                     (item) =>
                         !guesses.some(
                             (guess) =>
-                                guess.id === item.id
+                                guess.id ===
+                                item.id
                         )
                 )
-                .slice(0, 8);
+                .slice(
+                    0,
+                    8
+                );
 
         }, [
             query,
-            guesses,
             completed,
+            guesses,
+            generationPokemon,
         ]);
 
 
@@ -134,47 +224,53 @@ export default function PracticeGame() {
     // ==================================================
 
     function playCry() {
-
         if (!audioRef.current) {
             return;
         }
 
-        audioRef.current.currentTime = 0;
+        audioRef.current.currentTime =
+            0;
 
         audioRef.current
             .play()
-            .catch((error) => {
-                console.error(
-                    "No se pudo reproducir el audio:",
-                    error
-                );
-            });
+            .catch(
+                (playError) => {
+                    console.error(
+                        "No se pudo reproducir el audio:",
+                        playError
+                    );
+                }
+            );
     }
 
 
     // ==================================================
-    // BUSCADOR
+    // INPUT
     // ==================================================
 
     function handleInputChange(
         value: string
     ) {
-
         setQuery(value);
 
-        setSelectedPokemon(null);
+        setSelectedPokemon(
+            null
+        );
 
         setError("");
     }
 
 
-    function handleSelect(
+    function handleSelectPokemon(
         item: Pokemon
     ) {
+        setQuery(
+            item.name
+        );
 
-        setQuery(item.name);
-
-        setSelectedPokemon(item);
+        setSelectedPokemon(
+            item
+        );
 
         setError("");
     }
@@ -185,29 +281,32 @@ export default function PracticeGame() {
     // ==================================================
 
     function handleSubmit(
-        event: FormEvent<HTMLFormElement>
+        event:
+        FormEvent<HTMLFormElement>
     ) {
-
         event.preventDefault();
 
-        if (!answer || completed) {
+        if (
+            !answer ||
+            completed
+        ) {
             return;
         }
 
         const exactMatch =
             selectedPokemon ??
-            pokemon.find(
+            generationPokemon.find(
                 (item) =>
-                    item.name.toLowerCase() ===
+                    item.name
+                        .toLowerCase() ===
                     query
                         .trim()
                         .toLowerCase()
             );
 
         if (!exactMatch) {
-
             setError(
-                "Selecciona un Pokémon válido de cuarta generación."
+                `Selecciona un Pokémon válido de ${generationConfig.label}.`
             );
 
             return;
@@ -216,10 +315,10 @@ export default function PracticeGame() {
         if (
             guesses.some(
                 (guess) =>
-                    guess.id === exactMatch.id
+                    guess.id ===
+                    exactMatch.id
             )
         ) {
-
             setError(
                 "Ya has probado ese Pokémon."
             );
@@ -232,22 +331,21 @@ export default function PracticeGame() {
         );
 
         setGuesses(
-            (current) => [
-                ...current,
+            (currentGuesses) => [
+                ...currentGuesses,
                 exactMatch,
             ]
         );
 
         if (
-            exactMatch.id === answer.id
+            exactMatch.id ===
+            answer.id
         ) {
             setCompleted(true);
         }
 
         setQuery("");
-
         setSelectedPokemon(null);
-
         setError("");
     }
 
@@ -257,28 +355,27 @@ export default function PracticeGame() {
     // ==================================================
 
     function nextPokemon() {
-
-        if (!answer) {
+        if (
+            !answer ||
+            generationPokemon.length === 0
+        ) {
             return;
         }
 
-        const newAnswer =
+        setAnswer(
             getRandomPokemon(
+                generationPokemon,
                 answer.id
-            );
-
-        setAnswer(newAnswer);
+            )
+        );
 
         setGuesses([]);
-
         setCompleted(false);
 
         setQuery("");
-
         setSelectedPokemon(null);
 
         setError("");
-
         setLatestGuessId(null);
     }
 
@@ -289,7 +386,15 @@ export default function PracticeGame() {
 
     if (!answer) {
         return (
-            <div className="py-20 text-center text-zinc-500">
+            <div
+                className="
+          py-20
+          text-center
+          text-sm
+          font-semibold
+          text-zinc-500
+        "
+            >
                 Preparando práctica...
             </div>
         );
@@ -297,35 +402,63 @@ export default function PracticeGame() {
 
 
     // ==================================================
-    // INTERFAZ
+    // UI
     // ==================================================
 
     return (
         <section className="flex flex-col">
 
-            {/* ============================================== */}
-            {/* ZONA CENTRAL */}
-            {/* ============================================== */}
+            {/* GENERACIÓN */}
 
-            <div className="mx-auto w-full max-w-md">
+            <div className="mb-6 text-center">
 
                 <p
                     className="
-            mb-6
-            text-center
-            text-sm font-bold
+            text-sm
+            font-black
+            uppercase
+            tracking-[0.15em]
             text-blue-700
+          "
+                >
+                    {generationConfig.shortLabel}
+                    {" · "}
+                    {generationConfig.region}
+                </p>
+
+                <p
+                    className="
+            mt-1
+            text-sm
+            font-semibold
+            text-zinc-500
           "
                 >
                     Modo práctica
                 </p>
 
+            </div>
 
-                {/* ============================================ */}
-                {/* POKÉ BALL */}
-                {/* ============================================ */}
 
-                <div className="mb-10 flex justify-center">
+            {/* JUEGO */}
+
+            <div
+                className="
+          mx-auto
+          w-full
+          max-w-md
+        "
+            >
+
+                {/* AUDIO */}
+
+                <div
+                    className="
+            mb-10
+            flex
+            justify-center
+          "
+                >
 
                     <audio
                         ref={audioRef}
@@ -349,10 +482,6 @@ export default function PracticeGame() {
                 </div>
 
 
-                {/* ============================================ */}
-                {/* JUGANDO */}
-                {/* ============================================ */}
-
                 {!completed ? (
                     <>
 
@@ -360,7 +489,8 @@ export default function PracticeGame() {
                             className="
                 mb-4
                 text-center
-                text-xl font-semibold
+                text-xl
+                font-semibold
               "
                         >
                             ¿Qué Pokémon es?
@@ -368,7 +498,9 @@ export default function PracticeGame() {
 
 
                         <form
-                            onSubmit={handleSubmit}
+                            onSubmit={
+                                handleSubmit
+                            }
                         >
 
                             <div className="relative">
@@ -376,7 +508,9 @@ export default function PracticeGame() {
                                 <input
                                     type="text"
                                     value={query}
-                                    onChange={(event) =>
+                                    onChange={(
+                                        event
+                                    ) =>
                                         handleInputChange(
                                             event.target.value
                                         )
@@ -386,10 +520,13 @@ export default function PracticeGame() {
                                     className="
                     w-full
                     rounded-xl
-                    border border-zinc-700
+                    border
+                    border-zinc-700
                     bg-zinc-900
-                    px-4 py-4
-                    text-base text-white
+                    px-4
+                    py-4
+                    text-base
+                    text-white
                     outline-none
                     transition
                     placeholder:text-zinc-500
@@ -400,18 +537,21 @@ export default function PracticeGame() {
 
                                 {query &&
                                     !selectedPokemon &&
-                                    suggestions.length > 0 && (
+                                    suggestions.length >
+                                    0 && (
 
                                         <div
                                             className="
                         absolute
-                        left-0 right-0
+                        left-0
+                        right-0
                         top-[calc(100%+0.5rem)]
-                        z-20
+                        z-30
                         max-h-80
                         overflow-y-auto
                         rounded-xl
-                        border border-zinc-700
+                        border
+                        border-zinc-700
                         bg-zinc-900
                         shadow-xl
                       "
@@ -421,10 +561,14 @@ export default function PracticeGame() {
                                                 (item) => (
 
                                                     <button
-                                                        key={item.id}
+                                                        key={
+                                                            item.id
+                                                        }
                                                         type="button"
                                                         onClick={() =>
-                                                            handleSelect(item)
+                                                            handleSelectPokemon(
+                                                                item
+                                                            )
                                                         }
                                                         className="
                               flex
@@ -433,7 +577,8 @@ export default function PracticeGame() {
                               justify-between
                               border-b
                               border-zinc-800
-                              px-3 py-2
+                              px-3
+                              py-2
                               text-left
                               text-white
                               transition
@@ -442,27 +587,41 @@ export default function PracticeGame() {
                             "
                                                     >
 
-                                                        <div className="flex items-center gap-3">
+                                                        <div
+                                                            className="
+                                flex
+                                items-center
+                                gap-3
+                              "
+                                                        >
 
                                                             <div
                                                                 className="
                                   flex
-                                  h-14 w-14
+                                  h-14
+                                  w-14
                                   shrink-0
                                   items-center
                                   justify-center
                                   rounded-lg
-                                  border border-zinc-700
+                                  border
+                                  border-zinc-700
                                   bg-zinc-950
                                 "
                                                             >
+
                                                                 <Image
-                                                                    src={item.sprite}
-                                                                    alt={item.name}
+                                                                    src={
+                                                                        item.sprite
+                                                                    }
+                                                                    alt={
+                                                                        item.name
+                                                                    }
                                                                     width={56}
                                                                     height={56}
                                                                     className="[image-rendering:pixelated]"
                                                                 />
+
                                                             </div>
 
                                                             <span className="font-medium">
@@ -471,7 +630,12 @@ export default function PracticeGame() {
 
                                                         </div>
 
-                                                        <span className="text-xs text-zinc-400">
+                                                        <span
+                                                            className="
+                                text-xs
+                                text-zinc-400
+                              "
+                                                        >
                               #{item.id}
                             </span>
 
@@ -487,7 +651,15 @@ export default function PracticeGame() {
 
 
                             {error && (
-                                <p className="mt-3 text-center text-sm font-semibold text-red-600">
+                                <p
+                                    className="
+                    mt-3
+                    text-center
+                    text-sm
+                    font-semibold
+                    text-red-600
+                  "
+                                >
                                     {error}
                                 </p>
                             )}
@@ -499,9 +671,11 @@ export default function PracticeGame() {
                   mt-3
                   w-full
                   rounded-xl
-                  border-2 border-zinc-950
+                  border-2
+                  border-zinc-950
                   bg-yellow-400
-                  px-4 py-4
+                  px-4
+                  py-4
                   font-black
                   text-zinc-950
                   shadow-[0_4px_0_#18181b]
@@ -519,49 +693,79 @@ export default function PracticeGame() {
                     </>
                 ) : (
 
-                    /* ========================================== */
-                    /* VICTORIA */
-                    /* ========================================== */
-
                     <div
                         className="
               rounded-2xl
-              border-2 border-green-700
+              border-2
+              border-green-700
               bg-green-50
               p-6
               text-center
             "
                     >
 
-                        <p className="text-4xl text-green-600">
+                        <p
+                            className="
+                text-4xl
+                text-green-600
+              "
+                        >
                             ✓
                         </p>
 
-                        <h2 className="mt-3 text-2xl font-black">
+                        <h2
+                            className="
+                mt-3
+                text-2xl
+                font-black
+              "
+                        >
                             ¡Correcto!
                         </h2>
 
-                        <p className="mt-3 text-3xl font-black">
+                        <p
+                            className="
+                mt-3
+                text-3xl
+                font-black
+              "
+                        >
                             {answer.name}
                         </p>
 
                         <Image
-                            src={answer.sprite}
-                            alt={answer.name}
+                            src={
+                                answer.sprite
+                            }
+                            alt={
+                                answer.name
+                            }
                             width={160}
                             height={160}
                             className="
-                mx-auto mt-3
+                mx-auto
+                mt-3
                 [image-rendering:pixelated]
               "
                         />
 
-                        <p className="text-sm text-zinc-500">
+                        <p
+                            className="
+                text-sm
+                text-zinc-500
+              "
+                        >
                             #{answer.id}
                         </p>
 
-                        <p className="mt-4 text-zinc-700">
+                        <p
+                            className="
+                mt-4
+                text-zinc-700
+              "
+                        >
                             Lo has acertado en{" "}
+
                             <strong>
                                 {guesses.length}{" "}
                                 {guesses.length === 1
@@ -570,17 +774,20 @@ export default function PracticeGame() {
                             </strong>
                         </p>
 
-
                         <button
                             type="button"
-                            onClick={nextPokemon}
+                            onClick={
+                                nextPokemon
+                            }
                             className="
                 mt-6
                 w-full
                 rounded-xl
-                border-2 border-zinc-950
+                border-2
+                border-zinc-950
                 bg-blue-600
-                px-4 py-4
+                px-4
+                py-4
                 font-black
                 text-white
                 shadow-[0_4px_0_#18181b]
@@ -600,308 +807,396 @@ export default function PracticeGame() {
             </div>
 
 
-            {/* ============================================== */}
             {/* INTENTOS */}
-            {/* ============================================== */}
 
             <div className="mt-10 w-full">
 
-                <p className="mb-5 text-center text-sm text-zinc-500">
+                <p
+                    className="
+            mb-4
+            text-center
+            text-sm
+            text-zinc-500
+          "
+                >
                     Intentos: {guesses.length}
                 </p>
 
 
-                {guesses.length > 0 && (
+                {guesses.length >
+                    0 && (
+                        <>
 
-                    <div className="overflow-x-auto pb-3">
-
-                        <div
-                            className="
-                mx-auto
-                min-w-[590px]
-                max-w-4xl
-                sm:min-w-[720px]
-              "
-                        >
-
-                            {/* CABECERA */}
-
-                            <div
+                            <p
                                 className="
-                  mb-2
-                  grid grid-cols-7
-                  gap-2
-                  text-center
-                  text-xs font-bold
-                  text-zinc-600
-                "
+                mb-3
+                text-center
+                text-xs
+                font-semibold
+                text-zinc-500
+                sm:hidden
+              "
                             >
-                                <span>Pokémon</span>
-                                <span>Tipo 1</span>
-                                <span>Tipo 2</span>
-                                <span>Color</span>
-                                <span>Etapa</span>
-                                <span>Altura</span>
-                                <span>Peso</span>
-                            </div>
+                                ← Desliza para ver todas las pistas →
+                            </p>
 
 
-                            {/* FILAS */}
+                            <div className="overflow-x-auto pb-3">
 
-                            <div className="space-y-2">
+                                <div
+                                    className="
+                  mx-auto
+                  min-w-[590px]
+                  max-w-4xl
+                  sm:min-w-[720px]
+                "
+                                >
 
-                                {[...guesses]
-                                    .reverse()
-                                    .map((guess) => {
+                                    {/* CABECERA */}
 
-                                        const isLatest =
-                                            guess.id ===
-                                            latestGuessId;
+                                    <div
+                                        className="
+                    mb-2
+                    grid
+                    grid-cols-7
+                    gap-2
+                    text-center
+                    text-xs
+                    font-bold
+                    text-zinc-600
+                  "
+                                    >
 
+                  <span>
+                    Pokémon
+                  </span>
 
-                                        const evolutionDirection:
-                                            | "up"
-                                            | "down"
-                                            | undefined =
-                                            guess.evolutionStage <
-                                            answer.evolutionStage
-                                                ? "up"
-                                                : guess.evolutionStage >
-                                                answer.evolutionStage
-                                                    ? "down"
-                                                    : undefined;
+                                        <span>
+                    Tipo 1
+                  </span>
 
+                                        <span>
+                    Tipo 2
+                  </span>
 
-                                        const heightDirection:
-                                            | "up"
-                                            | "down"
-                                            | undefined =
-                                            guess.height <
-                                            answer.height
-                                                ? "up"
-                                                : guess.height >
-                                                answer.height
-                                                    ? "down"
-                                                    : undefined;
+                                        <span>
+                    Color
+                  </span>
 
+                                        <span>
+                    Etapa
+                  </span>
 
-                                        const weightDirection:
-                                            | "up"
-                                            | "down"
-                                            | undefined =
-                                            guess.weight <
-                                            answer.weight
-                                                ? "up"
-                                                : guess.weight >
-                                                answer.weight
-                                                    ? "down"
-                                                    : undefined;
+                                        <span>
+                    Altura
+                  </span>
 
+                                        <span>
+                    Peso
+                  </span>
 
-                                        const animation =
-                                            (
-                                                delay: number
-                                            ) =>
-                                                isLatest
-                                                    ? {
-                                                        className:
-                                                            "guess-flip",
-                                                        style: {
-                                                            animationDelay:
-                                                                `${delay}ms`,
-                                                        },
-                                                    }
-                                                    : {
-                                                        className: "",
-                                                        style:
-                                                        undefined,
-                                                    };
+                                    </div>
 
 
-                                        return (
-                                            <div
-                                                key={guess.id}
-                                                className="
-                          grid
-                          grid-cols-7
-                          gap-2
-                        "
-                                            >
+                                    {/* FILAS */}
 
-                                                {/* SPRITE */}
+                                    <div className="space-y-2">
 
-                                                <div
-                                                    {...animation(0)}
-                                                >
-                                                    <div
-                                                        className={`
-                              flex
-                              h-20 min-w-20
-                              items-center
-                              justify-center
-                              rounded-lg
-                              border-2
-                              bg-zinc-100
+                                        {[...guesses]
+                                            .reverse()
+                                            .map(
+                                                (guess) => {
 
-                              ${
-                                                            guess.id ===
-                                                            answer.id
-                                                                ? "border-green-500"
-                                                                : "border-red-500"
-                                                        }
-                            `}
-                                                    >
-                                                        <Image
-                                                            src={guess.sprite}
-                                                            alt={guess.name}
-                                                            width={72}
-                                                            height={72}
-                                                            className="[image-rendering:pixelated]"
-                                                        />
-                                                    </div>
-                                                </div>
+                                                    const isLatest =
+                                                        guess.id ===
+                                                        latestGuessId;
 
 
-                                                {/* TIPO 1 */}
-
-                                                <div
-                                                    {...animation(80)}
-                                                >
-                                                    <GuessCell
-                                                        label={
-                                                            getTypeName(
-                                                                guess.type1
-                                                            )
-                                                        }
-                                                        correct={
-                                                            guess.type1 ===
-                                                            answer.type1
-                                                        }
-                                                        partial={
-                                                            guess.type1 !==
-                                                            answer.type1 &&
-                                                            guess.type1 ===
-                                                            answer.type2
-                                                        }
-                                                    />
-                                                </div>
-
-
-                                                {/* TIPO 2 */}
-
-                                                <div
-                                                    {...animation(160)}
-                                                >
-                                                    <GuessCell
-                                                        label={
-                                                            getTypeName(
-                                                                guess.type2
-                                                            )
-                                                        }
-                                                        correct={
-                                                            guess.type2 ===
-                                                            answer.type2
-                                                        }
-                                                        partial={
-                                                            guess.type2 !==
-                                                            null &&
-                                                            guess.type2 !==
-                                                            answer.type2 &&
-                                                            guess.type2 ===
-                                                            answer.type1
-                                                        }
-                                                    />
-                                                </div>
-
-
-                                                {/* COLOR */}
-
-                                                <div
-                                                    {...animation(240)}
-                                                >
-                                                    <GuessCell
-                                                        label={
-                                                            getColorName(
-                                                                guess.color
-                                                            )
-                                                        }
-                                                        correct={
-                                                            guess.color ===
-                                                            answer.color
-                                                        }
-                                                    />
-                                                </div>
-
-
-                                                {/* ETAPA */}
-
-                                                <div
-                                                    {...animation(320)}
-                                                >
-                                                    <GuessCell
-                                                        label={String(
-                                                            guess.evolutionStage
-                                                        )}
-                                                        correct={
-                                                            guess.evolutionStage ===
+                                                    const evolutionDirection:
+                                                        | "up"
+                                                        | "down"
+                                                        | undefined =
+                                                        guess.evolutionStage <
+                                                        answer.evolutionStage
+                                                            ? "up"
+                                                            : guess.evolutionStage >
                                                             answer.evolutionStage
-                                                        }
-                                                        direction={
-                                                            evolutionDirection
-                                                        }
-                                                    />
-                                                </div>
+                                                                ? "down"
+                                                                : undefined;
 
 
-                                                {/* ALTURA */}
-
-                                                <div
-                                                    {...animation(400)}
-                                                >
-                                                    <GuessCell
-                                                        label={`${guess.height.toFixed(
-                                                            1
-                                                        )} m`}
-                                                        correct={
-                                                            guess.height ===
+                                                    const heightDirection:
+                                                        | "up"
+                                                        | "down"
+                                                        | undefined =
+                                                        guess.height <
+                                                        answer.height
+                                                            ? "up"
+                                                            : guess.height >
                                                             answer.height
-                                                        }
-                                                        direction={
-                                                            heightDirection
-                                                        }
-                                                    />
-                                                </div>
+                                                                ? "down"
+                                                                : undefined;
 
 
-                                                {/* PESO */}
-
-                                                <div
-                                                    {...animation(480)}
-                                                >
-                                                    <GuessCell
-                                                        label={`${guess.weight.toFixed(
-                                                            1
-                                                        )} kg`}
-                                                        correct={
-                                                            guess.weight ===
+                                                    const weightDirection:
+                                                        | "up"
+                                                        | "down"
+                                                        | undefined =
+                                                        guess.weight <
+                                                        answer.weight
+                                                            ? "up"
+                                                            : guess.weight >
                                                             answer.weight
-                                                        }
-                                                        direction={
-                                                            weightDirection
-                                                        }
-                                                    />
-                                                </div>
+                                                                ? "down"
+                                                                : undefined;
 
-                                            </div>
-                                        );
-                                    })}
+
+                                                    function animation(
+                                                        delay: number
+                                                    ) {
+                                                        if (!isLatest) {
+                                                            return {};
+                                                        }
+
+                                                        return {
+                                                            className:
+                                                                "guess-flip",
+
+                                                            style: {
+                                                                animationDelay:
+                                                                    `${delay}ms`,
+                                                            },
+                                                        };
+                                                    }
+
+
+                                                    return (
+                                                        <div
+                                                            key={
+                                                                guess.id
+                                                            }
+                                                            className="
+                              grid
+                              grid-cols-7
+                              gap-2
+                            "
+                                                        >
+
+                                                            {/* SPRITE */}
+
+                                                            <div
+                                                                className={
+                                                                    isLatest
+                                                                        ? "guess-flip"
+                                                                        : ""
+                                                                }
+                                                                style={
+                                                                    isLatest
+                                                                        ? {
+                                                                            animationDelay:
+                                                                                "0ms",
+                                                                        }
+                                                                        : undefined
+                                                                }
+                                                            >
+
+                                                                <div
+                                                                    className={`
+                                  flex
+                                  h-16
+                                  min-w-16
+                                  items-center
+                                  justify-center
+                                  rounded-lg
+                                  border-2
+                                  bg-zinc-100
+
+                                  sm:h-20
+                                  sm:min-w-20
+
+                                  ${
+                                                                        guess.id ===
+                                                                        answer.id
+                                                                            ? "border-green-500"
+                                                                            : "border-red-500"
+                                                                    }
+                                `}
+                                                                >
+
+                                                                    <Image
+                                                                        src={
+                                                                            guess.sprite
+                                                                        }
+                                                                        alt={
+                                                                            guess.name
+                                                                        }
+                                                                        width={72}
+                                                                        height={72}
+                                                                        className="[image-rendering:pixelated]"
+                                                                    />
+
+                                                                </div>
+
+                                                            </div>
+
+
+                                                            {/* TIPO 1 */}
+
+                                                            <div
+                                                                {...animation(
+                                                                    80
+                                                                )}
+                                                            >
+                                                                <GuessCell
+                                                                    label={
+                                                                        getTypeName(
+                                                                            guess.type1
+                                                                        )
+                                                                    }
+                                                                    correct={
+                                                                        guess.type1 ===
+                                                                        answer.type1
+                                                                    }
+                                                                    partial={
+                                                                        guess.type1 !==
+                                                                        answer.type1 &&
+                                                                        guess.type1 ===
+                                                                        answer.type2
+                                                                    }
+                                                                />
+                                                            </div>
+
+
+                                                            {/* TIPO 2 */}
+
+                                                            <div
+                                                                {...animation(
+                                                                    160
+                                                                )}
+                                                            >
+                                                                <GuessCell
+                                                                    label={
+                                                                        getTypeName(
+                                                                            guess.type2
+                                                                        )
+                                                                    }
+                                                                    correct={
+                                                                        guess.type2 ===
+                                                                        answer.type2
+                                                                    }
+                                                                    partial={
+                                                                        guess.type2 !==
+                                                                        null &&
+                                                                        guess.type2 !==
+                                                                        answer.type2 &&
+                                                                        guess.type2 ===
+                                                                        answer.type1
+                                                                    }
+                                                                />
+                                                            </div>
+
+
+                                                            {/* COLOR */}
+
+                                                            <div
+                                                                {...animation(
+                                                                    240
+                                                                )}
+                                                            >
+                                                                <GuessCell
+                                                                    label={
+                                                                        getColorName(
+                                                                            guess.color
+                                                                        )
+                                                                    }
+                                                                    correct={
+                                                                        guess.color ===
+                                                                        answer.color
+                                                                    }
+                                                                />
+                                                            </div>
+
+
+                                                            {/* ETAPA */}
+
+                                                            <div
+                                                                {...animation(
+                                                                    320
+                                                                )}
+                                                            >
+                                                                <GuessCell
+                                                                    label={
+                                                                        String(
+                                                                            guess.evolutionStage
+                                                                        )
+                                                                    }
+                                                                    correct={
+                                                                        guess.evolutionStage ===
+                                                                        answer.evolutionStage
+                                                                    }
+                                                                    direction={
+                                                                        evolutionDirection
+                                                                    }
+                                                                />
+                                                            </div>
+
+
+                                                            {/* ALTURA */}
+
+                                                            <div
+                                                                {...animation(
+                                                                    400
+                                                                )}
+                                                            >
+                                                                <GuessCell
+                                                                    label={`${guess.height.toFixed(
+                                                                        1
+                                                                    )} m`}
+                                                                    correct={
+                                                                        guess.height ===
+                                                                        answer.height
+                                                                    }
+                                                                    direction={
+                                                                        heightDirection
+                                                                    }
+                                                                />
+                                                            </div>
+
+
+                                                            {/* PESO */}
+
+                                                            <div
+                                                                {...animation(
+                                                                    480
+                                                                )}
+                                                            >
+                                                                <GuessCell
+                                                                    label={`${guess.weight.toFixed(
+                                                                        1
+                                                                    )} kg`}
+                                                                    correct={
+                                                                        guess.weight ===
+                                                                        answer.weight
+                                                                    }
+                                                                    direction={
+                                                                        weightDirection
+                                                                    }
+                                                                />
+                                                            </div>
+
+                                                        </div>
+                                                    );
+                                                }
+                                            )}
+
+                                    </div>
+
+                                </div>
 
                             </div>
 
-                        </div>
-
-                    </div>
-                )}
+                        </>
+                    )}
 
             </div>
 

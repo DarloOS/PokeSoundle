@@ -1,6 +1,12 @@
 import Link from "next/link";
 
 import PracticeGame from "@/components/PracticeGame";
+import GenerationSelector from "@/components/GenerationSelector";
+import {
+    GenerationBadge,
+    GenerationSubtitle,
+    GenerationRange,
+} from "@/components/GenerationDisplay";
 
 export default function PracticePage() {
     return (
@@ -72,12 +78,20 @@ export default function PracticePage() {
                   text-white
                 "
                             >
-                Gen IV
+                <GenerationBadge />
               </span>
                         </div>
 
                         <div className="bg-zinc-100 px-4 py-7 sm:px-8">
+
+                            {/* SELECTOR DE GENERACIÓN */}
+                            <div className="mb-6 flex justify-center">
+                                <GenerationSelector />
+                            </div>
+
+                            {/* JUEGO DE PRÁCTICA */}
                             <PracticeGame />
+
                         </div>
 
                         <footer

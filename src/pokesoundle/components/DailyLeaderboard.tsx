@@ -14,12 +14,18 @@ import {
     type LeaderboardEntry,
 } from "@/lib/leaderboard";
 
+import type {
+    GenerationId,
+} from "@/data/generations";
+
 type DailyLeaderboardProps = {
+    generation: GenerationId;
     gameNumber: number;
     attempts: number;
 };
 
 export default function DailyLeaderboard({
+                                             generation,
                                              gameNumber,
                                              attempts,
                                          }: DailyLeaderboardProps) {
@@ -52,7 +58,7 @@ export default function DailyLeaderboard({
                 setError("");
 
                 const existing =
-                    await getMyScore(gameNumber);
+                    await getMyScore(generation, gameNumber);
 
                 setMyEntry(existing);
 
@@ -60,7 +66,7 @@ export default function DailyLeaderboard({
                 // después de haber enviado el resultado.
                 if (existing) {
                     const leaderboard =
-                        await getLeaderboard(gameNumber);
+                        await getLeaderboard(generation, gameNumber);
 
                     setEntries(leaderboard);
                 }
@@ -88,7 +94,7 @@ export default function DailyLeaderboard({
             setError("");
 
             const leaderboard =
-                await getLeaderboard(gameNumber);
+                await getLeaderboard(generation, gameNumber);
 
             setEntries(leaderboard);
         } catch (error) {
@@ -118,6 +124,7 @@ export default function DailyLeaderboard({
             setError("");
 
             const entry = await submitScore(
+                generation,
                 gameNumber,
                 nickname,
                 attempts
@@ -126,7 +133,7 @@ export default function DailyLeaderboard({
             setMyEntry(entry);
 
             const leaderboard =
-                await getLeaderboard(gameNumber);
+                await getLeaderboard(generation, gameNumber);
 
             setEntries(leaderboard);
         } catch (error) {

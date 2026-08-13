@@ -1,83 +1,81 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import SoundLibrary from "@/components/SoundLibrary";
-
-export const metadata: Metadata = {
-    title: "Biblioteca de sonidos | PokeSoundle",
-    description:
-        "Escucha los gritos de los 107 Pokémon de cuarta generación.",
-};
+import GenerationSelector from "@/components/GenerationSelector";
 
 export default function SoundsPage() {
     return (
         <main className="min-h-screen bg-pokesoundle-bg text-zinc-900">
             <div className="min-h-screen bg-grid-pattern px-3 py-6 sm:px-6 sm:py-10">
 
-                <div className="mx-auto w-full max-w-6xl">
+                <div className="mx-auto w-full max-w-5xl">
 
-                    {/* Cabecera */}
                     <header className="mb-6 text-center">
-
-                        <Link
-                            href="/"
-                            className="
-                inline-block
-                text-4xl
-                font-black
-                text-yellow-400
-                [-webkit-text-stroke:2px_#173b70]
-                sm:text-5xl
-              "
-                        >
+                        <h1 className="pokesoundle-logo">
                             PokeSoundle
-                        </Link>
+                        </h1>
 
-                        <p
-                            className="
-                mt-3
-                text-sm
-                font-bold
-                uppercase
-                tracking-[0.2em]
-                text-white/80
-              "
-                        >
-                            Biblioteca de sonidos
-                        </p>
-
+                        <div className="mt-3 flex justify-center">
+              <span
+                  className="
+                  rounded-full
+                  border-2 border-white/30
+                  bg-black/20
+                  px-4 py-1
+                  text-xs font-bold
+                  uppercase tracking-[0.25em]
+                  text-white
+                "
+              >
+                Sound Library
+              </span>
+                        </div>
                     </header>
 
-                    {/* Pokédex */}
-                    <section
+
+                    <div
                         className="
               overflow-hidden
               rounded-[2rem]
-              border-4
-              border-zinc-950
+              border-4 border-zinc-950
               bg-zinc-100
               shadow-2xl
             "
                     >
 
-                        {/* Barra superior */}
                         <div
                             className="
                 flex
                 items-center
                 justify-between
+                gap-3
                 border-b-4
                 border-zinc-950
-                bg-red-600
-                px-5
+                bg-blue-700
+                px-4
                 py-3
+                sm:px-5
               "
                         >
-                            <div className="flex items-center gap-2">
-                                <span className="h-4 w-4 rounded-full border-2 border-zinc-950 bg-cyan-300" />
-                                <span className="h-3 w-3 rounded-full border-2 border-zinc-950 bg-yellow-300" />
-                                <span className="h-3 w-3 rounded-full border-2 border-zinc-950 bg-green-400" />
-                            </div>
+
+                            <Link
+                                href="/"
+                                className="
+                  rounded-lg
+                  border-2
+                  border-zinc-950
+                  bg-white
+                  px-3
+                  py-2
+                  text-xs
+                  font-black
+                  text-zinc-950
+                  transition
+                  hover:bg-zinc-200
+                "
+                            >
+                                ← Reto diario
+                            </Link>
 
                             <span
                                 className="
@@ -88,76 +86,29 @@ export default function SoundsPage() {
                   text-white
                 "
                             >
-                Gen IV
+                Pokédex
               </span>
+
                         </div>
 
-                        {/* Contenido */}
-                        <div className="p-4 sm:p-6 lg:p-8">
 
-                            <div
-                                className="
-                  mb-7
-                  flex
-                  flex-col
-                  gap-4
-                  sm:flex-row
-                  sm:items-center
-                  sm:justify-between
-                "
-                            >
-                                <div>
-                                    <h1
-                                        className="
-                      text-2xl
-                      font-black
-                      sm:text-3xl
-                    "
-                                    >
-                                        Biblioteca de sonidos
-                                    </h1>
+                        <div
+                            className="
+                bg-zinc-100
+                px-4
+                py-7
+                sm:px-8
+              "
+                        >
 
-                                    <p
-                                        className="
-                      mt-1
-                      text-sm
-                      text-zinc-600
-                    "
-                                    >
-                                        Pulsa un Pokémon para escuchar
-                                        su grito original de Nintendo DS.
-                                    </p>
-                                </div>
-
-                                <Link
-                                    href="/"
-                                    className="
-                    inline-flex
-                    items-center
-                    justify-center
-                    rounded-xl
-                    border-2
-                    border-zinc-950
-                    bg-yellow-400
-                    px-4
-                    py-2
-                    text-sm
-                    font-black
-                    text-zinc-950
-                    shadow-[0_3px_0_#18181b]
-                    transition
-                    hover:bg-yellow-300
-                    active:translate-y-[3px]
-                    active:shadow-none
-                  "
-                                >
-                                    ← Volver al juego
-                                </Link>
+                            <div className="mb-8 flex justify-center">
+                                <GenerationSelector />
                             </div>
 
                             <SoundLibrary />
 
                         </div>
+
 
                         <footer
                             className="
@@ -172,12 +123,13 @@ export default function SoundsPage() {
                 text-zinc-400
               "
                         >
-                            107 Pokémon · #387–493
+                            Biblioteca de sonidos · PokeSoundle
                         </footer>
 
-                    </section>
+                    </div>
 
                 </div>
+
             </div>
         </main>
     );

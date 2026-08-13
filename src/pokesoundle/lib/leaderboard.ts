@@ -1,4 +1,11 @@
-import { supabase } from "@/lib/supabase";
+import {
+    supabase,
+} from "@/lib/supabase";
+
+import type {
+    GenerationId,
+} from "@/data/generations";
+
 
 export type LeaderboardEntry = {
     id: number;
@@ -7,11 +14,15 @@ export type LeaderboardEntry = {
     created_at: string;
 };
 
+
 async function ensureAnonymousUser() {
     const {
-        data: { session },
+        data: {
+            session,
+        },
         error: sessionError,
-    } = await supabase.auth.getSession();
+    } =
+        await supabase.auth.getSession();
 
     if (sessionError) {
         throw sessionError;
@@ -21,10 +32,12 @@ async function ensureAnonymousUser() {
         return session.user;
     }
 
+
     const {
         data,
         error,
-    } = await supabase.auth.signInAnonymously();
+    } =
+        await supabase.auth.signInAnonymously();
 
     if (error) {
         throw error;
@@ -39,22 +52,40 @@ async function ensureAnonymousUser() {
     return data.user;
 }
 
+
 export async function getMyScore(
+    generation: GenerationId,
     gameNumber: number
 ): Promise<LeaderboardEntry | null> {
-    const user = await ensureAnonymousUser();
+
+    const user =
+        await ensureAnonymousUser();
 
     const {
         data,
         error,
-    } = await supabase
-        .from("daily_leaderboard")
-        .select(
-            "id, nickname, attempts, created_at"
-        )
-        .eq("game_number", gameNumber)
-        .eq("user_id", user.id)
-        .maybeSingle();
+    } =
+        await supabase
+            .from(
+                "daily_leaderboard"
+            )
+            .select(
+                "id, nickname, attempts, created_at"
+            )
+            .eq(
+                "generation",
+                generation
+            )
+            .eq(
+                "game_number",
+                gameNumber
+            )
+            .eq(
+                "user_id",
+                user.id
+            )
+            .maybeSingle();
+
 
     if (error) {
         throw error;
@@ -63,16 +94,25 @@ export async function getMyScore(
     return data;
 }
 
+
 export async function submitScore(
+    generation: GenerationId,
     gameNumber: number,
     nickname: string,
     attempts: number
 ): Promise<LeaderboardEntry> {
-    const user = await ensureAnonymousUser();
 
-    const cleanNickname = nickname
-        .trim()
-        .replace(/\s+/g, " ");
+    const user =
+        await ensureAnonymousUser();
+
+    const cleanNickname =
+        nickname
+            .trim()
+            .replace(
+                /\s+/g,
+                " "
+            );
+
 
     if (
         cleanNickname.length < 2 ||
@@ -83,28 +123,45 @@ export async function submitScore(
         );
     }
 
+
     const {
         data,
         error,
-    } = await supabase
-        .from("daily_leaderboard")
-        .insert({
-            user_id: user.id,
-            game_number: gameNumber,
-            nickname: cleanNickname,
-            attempts,
-        })
-        .select(
-            "id, nickname, attempts, created_at"
-        )
-        .single();
+    } =
+        await supabase
+            .from(
+                "daily_leaderboard"
+            )
+            .insert({
+                user_id:
+                user.id,
+
+                generation,
+
+                game_number:
+                gameNumber,
+
+                nickname:
+                cleanNickname,
+
+                attempts,
+            })
+            .select(
+                "id, nickname, attempts, created_at"
+            )
+            .single();
+
 
     if (error) {
-        // Si ya había enviado un resultado hoy,
-        // recuperamos el existente.
-        if (error.code === "23505") {
+
+        if (
+            error.code === "23505"
+        ) {
             const existing =
-                await getMyScore(gameNumber);
+                await getMyScore(
+                    generation,
+                    gameNumber
+                );
 
             if (existing) {
                 return existing;
@@ -114,30 +171,54 @@ export async function submitScore(
         throw error;
     }
 
+
     return data;
 }
 
+
 export async function getLeaderboard(
+    generation: GenerationId,
     gameNumber: number
-): Promise<LeaderboardEntry[]> {
+): Promise<
+    LeaderboardEntry[]
+> {
+
     await ensureAnonymousUser();
+
 
     const {
         data,
         error,
-    } = await supabase
-        .from("daily_leaderboard")
-        .select(
-            "id, nickname, attempts, created_at"
-        )
-        .eq("game_number", gameNumber)
-        .order("attempts", {
-            ascending: true,
-        })
-        .order("created_at", {
-            ascending: true,
-        })
-        .limit(100);
+    } =
+        await supabase
+            .from(
+                "daily_leaderboard"
+            )
+            .select(
+                "id, nickname, attempts, created_at"
+            )
+            .eq(
+                "generation",
+                generation
+            )
+            .eq(
+                "game_number",
+                gameNumber
+            )
+            .order(
+                "attempts",
+                {
+                    ascending: true,
+                }
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true,
+                }
+            )
+            .limit(100);
+
 
     if (error) {
         throw error;

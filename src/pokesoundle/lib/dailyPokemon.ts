@@ -1,62 +1,144 @@
-import { pokemon, Pokemon } from "@/data/pokemon";
+import {
+  getGeneration,
+  type GenerationId,
+} from "@/data/generations";
 
-const LAUNCH_DATE = "2026-08-12";
+import {
+  getPokemonByGeneration,
+  type Pokemon,
+} from "@/data/pokemon";
+
 const TIME_ZONE = "Europe/Madrid";
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+
 /**
- * Obtiene la fecha YYYY-MM-DD correspondiente a España peninsular.
+ * Devuelve la fecha YYYY-MM-DD correspondiente
+ * a Europe/Madrid.
  */
-function getDateInMadrid(date: Date = new Date()): string {
-  const formatter = new Intl.DateTimeFormat("en-GB", {
-    timeZone: TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+function getMadridDateString(
+    date: Date = new Date()
+): string {
+  const formatter =
+      new Intl.DateTimeFormat("en-CA", {
+        timeZone: TIME_ZONE,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
 
-  const parts = formatter.formatToParts(date);
-
-  const year = parts.find((part) => part.type === "year")!.value;
-  const month = parts.find((part) => part.type === "month")!.value;
-  const day = parts.find((part) => part.type === "day")!.value;
-
-  return `${year}-${month}-${day}`;
+  return formatter.format(date);
 }
 
-/**
- * Convierte YYYY-MM-DD en un número de días.
- * Usamos UTC aquí para evitar problemas con cambios de horario.
- */
-function dateToDayNumber(dateString: string): number {
-  const [year, month, day] = dateString.split("-").map(Number);
-
-  return Math.floor(Date.UTC(year, month - 1, day) / (1000 * 60 * 60 * 24));
-}
 
 /**
- * Número de PokeSoundle:
- * Día de lanzamiento = 1
- */
-export function getPokeSoundleNumber(date: Date = new Date()): number {
-  const today = getDateInMadrid(date);
-
-  const launchDay = dateToDayNumber(LAUNCH_DATE);
-  const currentDay = dateToDayNumber(today);
-
-  return Math.max(1, currentDay - launchDay + 1);
-}
-
-/**
- * Devuelve el Pokémon correspondiente a ese día.
+ * Convierte YYYY-MM-DD en un número de día.
  *
- * 37 es coprimo con 107, por lo que recorreremos los
- * 107 Pokémon sin repetir antes de completar el ciclo.
+ * Utilizamos UTC únicamente para calcular
+ * correctamente la diferencia entre dos fechas.
  */
-export function getDailyPokemon(date: Date = new Date()): Pokemon {
-  const dayNumber = getPokeSoundleNumber(date);
-  const dayIndex = dayNumber - 1;
+function dateToDayNumber(
+    dateString: string
+): number {
+  const [year, month, day] =
+      dateString
+          .split("-")
+          .map(Number);
 
-  const pokemonIndex = (dayIndex * 37 + 17) % pokemon.length;
+  return Math.floor(
+      Date.UTC(
+          year,
+          month - 1,
+          day
+      ) / DAY_IN_MS
+  );
+}
 
-  return pokemon[pokemonIndex];
+
+/**
+ * Número del PokeSoundle para una generación.
+ *
+ * El día de lanzamiento es PokeSoundle #1.
+ */
+export function getPokeSoundleNumber(
+    generation: GenerationId,
+    date: Date = new Date()
+): number {
+  const config =
+      getGeneration(generation);
+
+  if (!config.launchDate) {
+    throw new Error(
+        `${config.label} todavía no tiene fecha de lanzamiento.`
+    );
+  }
+
+  const currentDate =
+      getMadridDateString(date);
+
+  const currentDay =
+      dateToDayNumber(currentDate);
+
+  const launchDay =
+      dateToDayNumber(
+          config.launchDate
+      );
+
+  const difference =
+      currentDay - launchDay;
+
+  return Math.max(
+      1,
+      difference + 1
+  );
+}
+
+
+/**
+ * Pokémon diario de una generación.
+ */
+export function getDailyPokemon(
+    generation: GenerationId,
+    date: Date = new Date()
+): Pokemon {
+  const generationPokemon =
+      getPokemonByGeneration(
+          generation
+      );
+
+  if (
+      generationPokemon.length === 0
+  ) {
+    throw new Error(
+        `No hay Pokémon cargados para la generación ${generation}.`
+    );
+  }
+
+  const gameNumber =
+      getPokeSoundleNumber(
+          generation,
+          date
+      );
+
+  const dayIndex =
+      gameNumber - 1;
+
+  /*
+   * Mantenemos la misma fórmula que usaba
+   * actualmente Gen IV.
+   *
+   * Así NO cambia el Pokémon diario que
+   * corresponde a los PokeSoundle existentes.
+   */
+  const pokemonIndex =
+      (
+          dayIndex * 37 +
+          17
+      ) %
+      generationPokemon.length;
+
+  return generationPokemon[
+      pokemonIndex
+      ];
 }

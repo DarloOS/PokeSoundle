@@ -1,199 +1,394 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
 
-import { pokemon, type Pokemon } from "@/data/pokemon";
+import {
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 
-const sortedPokemon = [...pokemon].sort(
-    (a, b) => a.id - b.id
-);
+import {
+    getPokemonByGeneration,
+    type Pokemon,
+} from "@/data/pokemon";
+
+import {
+    getGeneration,
+} from "@/data/generations";
+
+import {
+    useGeneration,
+} from "@/components/GenerationProvider";
+
 
 export default function SoundLibrary() {
-    const audioRef = useRef<HTMLAudioElement>(null);
 
-    const [playingId, setPlayingId] =
-        useState<number | null>(null);
+    // ==================================================
+    // GENERACIÓN
+    // ==================================================
 
-    function playCry(item: Pokemon) {
-        const audio = audioRef.current;
+    const {
+        generation,
+    } = useGeneration();
 
-        if (!audio) {
+
+    const generationConfig =
+        getGeneration(
+            generation
+        );
+
+
+    /*
+     * Obtenemos solamente los Pokémon
+     * de la generación seleccionada
+     * y los ordenamos por número de Pokédex.
+     */
+    const generationPokemon =
+        useMemo(
+            () =>
+                [
+                    ...getPokemonByGeneration(
+                        generation
+                    ),
+                ].sort(
+                    (a, b) =>
+                        a.id - b.id
+                ),
+            [generation]
+        );
+
+
+    // ==================================================
+    // AUDIO
+    // ==================================================
+
+    const audioRef =
+        useRef<HTMLAudioElement>(
+            null
+        );
+
+
+    const [
+        playingPokemonId,
+        setPlayingPokemonId,
+    ] =
+        useState<number | null>(
+            null
+        );
+
+
+    function playCry(
+        pokemon: Pokemon
+    ) {
+        if (!audioRef.current) {
             return;
         }
 
-        // Detenemos el sonido anterior
-        audio.pause();
 
-        audio.src = item.cry;
-        audio.currentTime = 0;
+        /*
+         * Cambiamos el archivo de audio
+         * al Pokémon seleccionado.
+         */
+        audioRef.current.src =
+            pokemon.cry;
 
-        setPlayingId(item.id);
+        audioRef.current.currentTime =
+            0;
 
-        audio.play().catch((error) => {
-            console.error(
-                "No se pudo reproducir el grito:",
-                error
+
+        setPlayingPokemonId(
+            pokemon.id
+        );
+
+
+        audioRef.current
+            .play()
+            .catch(
+                (error) => {
+                    console.error(
+                        "No se pudo reproducir el sonido:",
+                        error
+                    );
+
+                    setPlayingPokemonId(
+                        null
+                    );
+                }
             );
-
-            setPlayingId(null);
-        });
     }
 
+
+    // ==================================================
+    // UI
+    // ==================================================
+
     return (
-        <>
+        <section>
+
+            {/* ============================================== */}
+            {/* INFORMACIÓN */}
+            {/* ============================================== */}
+
+            <div
+                className="
+          mb-8
+          text-center
+        "
+            >
+
+                <p
+                    className="
+            text-sm
+            font-black
+            uppercase
+            tracking-[0.15em]
+            text-blue-700
+          "
+                >
+                    {generationConfig.shortLabel}
+                    {" · "}
+                    {generationConfig.region}
+                </p>
+
+
+                <h2
+                    className="
+            mt-2
+            text-2xl
+            font-black
+            text-zinc-900
+          "
+                >
+                    Biblioteca de sonidos
+                </h2>
+
+
+                <p
+                    className="
+            mx-auto
+            mt-2
+            max-w-lg
+            text-sm
+            text-zinc-500
+          "
+                >
+                    Pulsa sobre un Pokémon para escuchar su grito.
+                </p>
+
+            </div>
+
+
+            {/* ============================================== */}
+            {/* AUDIO GLOBAL */}
+            {/* ============================================== */}
+
             <audio
                 ref={audioRef}
-                onEnded={() => setPlayingId(null)}
-                onPause={() => {
-                    if (
-                        audioRef.current &&
-                        audioRef.current.currentTime !== 0
-                    ) {
-                        return;
-                    }
-
-                    setPlayingId(null);
-                }}
+                preload="none"
+                onEnded={() =>
+                    setPlayingPokemonId(
+                        null
+                    )
+                }
             />
+
+
+            {/* ============================================== */}
+            {/* GRID DE POKÉMON */}
+            {/* ============================================== */}
 
             <div
                 className="
           grid
-          grid-cols-2
+          grid-cols-3
           gap-3
-          sm:grid-cols-3
-          md:grid-cols-4
-          lg:grid-cols-5
-          xl:grid-cols-6
+
+          sm:grid-cols-4
+
+          md:grid-cols-5
+
+          lg:grid-cols-6
         "
             >
-                {sortedPokemon.map((item) => {
-                    const isPlaying =
-                        playingId === item.id;
 
-                    return (
-                        <button
-                            key={item.id}
-                            type="button"
-                            onClick={() => playCry(item)}
-                            aria-label={`Reproducir grito de ${item.name}`}
-                            className={`
-                group
-                relative
-                flex
-                flex-col
-                items-center
-                rounded-2xl
-                border-2
-                p-3
-                text-zinc-950
-                transition
+                {generationPokemon.map(
+                    (pokemon) => {
 
-                hover:-translate-y-1
-                hover:shadow-lg
+                        const isPlaying =
+                            playingPokemonId ===
+                            pokemon.id;
 
-                active:translate-y-0
 
-                ${
-                                isPlaying
-                                    ? "border-yellow-500 bg-yellow-100 shadow-lg"
-                                    : "border-zinc-300 bg-white hover:border-blue-500"
-                            }
-              `}
-                        >
-                            {/* Número */}
-                            <span
-                                className="
-                  absolute
-                  left-3
-                  top-3
-                  text-xs
-                  font-black
-                  text-zinc-400
-                "
-                            >
-                #{item.id}
-              </span>
+                        return (
 
-                            {/* Indicador de sonido */}
-                            <span
+                            <button
+                                key={
+                                    pokemon.id
+                                }
+                                type="button"
+                                onClick={() =>
+                                    playCry(
+                                        pokemon
+                                    )
+                                }
+                                aria-label={
+                                    `Reproducir sonido de ${pokemon.name}`
+                                }
                                 className={`
-                  absolute
-                  right-3
-                  top-3
-                  text-lg
+                  group
+                  relative
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  rounded-xl
+                  border-2
+                  p-3
                   transition
 
                   ${
                                     isPlaying
-                                        ? "scale-110"
-                                        : "opacity-40 group-hover:opacity-100"
+                                        ? `
+                        border-yellow-500
+                        bg-yellow-100
+                        shadow-[0_4px_0_#18181b]
+                      `
+                                        : `
+                        border-zinc-300
+                        bg-white
+                        hover:-translate-y-1
+                        hover:border-blue-500
+                        hover:shadow-md
+                      `
                                 }
                 `}
                             >
-                {isPlaying ? "🔊" : "🔈"}
-              </span>
 
-                            {/* Sprite */}
-                            <div
-                                className="
-                  mt-4
-                  flex
-                  h-28
-                  w-28
-                  items-center
-                  justify-center
-                "
-                            >
-                                <Image
-                                    src={item.sprite}
-                                    alt={item.name}
-                                    width={112}
-                                    height={112}
+                                {/* SPRITE */}
+
+                                <div
                                     className="
-                    h-28
-                    w-28
-                    object-contain
-                    transition
-                    [image-rendering:pixelated]
+                    relative
+                    flex
+                    h-20
+                    w-20
+                    items-center
+                    justify-center
 
-                    group-hover:scale-110
+                    sm:h-24
+                    sm:w-24
                   "
-                                />
-                            </div>
+                                >
 
-                            {/* Nombre */}
-                            <p
-                                className="
-                  mt-2
-                  text-center
-                  text-sm
-                  font-black
-                  sm:text-base
-                "
-                            >
-                                {item.name}
-                            </p>
+                                    <Image
+                                        src={
+                                            pokemon.sprite
+                                        }
+                                        alt={
+                                            pokemon.name
+                                        }
+                                        width={96}
+                                        height={96}
+                                        className="
+                      [image-rendering:pixelated]
+                      transition
+                      group-hover:scale-110
+                    "
+                                    />
 
-                            <p
-                                className="
-                  mt-1
-                  text-[10px]
-                  font-bold
-                  uppercase
-                  tracking-widest
-                  text-zinc-400
-                "
-                            >
-                                {isPlaying
-                                    ? "Reproduciendo"
-                                    : "Escuchar"}
-                            </p>
-                        </button>
-                    );
-                })}
+
+                                    {/* INDICADOR DE AUDIO */}
+
+                                    {isPlaying && (
+
+                                        <div
+                                            className="
+                        absolute
+                        right-0
+                        top-0
+                        flex
+                        h-7
+                        w-7
+                        items-center
+                        justify-center
+                        rounded-full
+                        border-2
+                        border-zinc-950
+                        bg-yellow-400
+                        text-xs
+                      "
+                                        >
+                                            ♪
+                                        </div>
+
+                                    )}
+
+                                </div>
+
+
+                                {/* NOMBRE */}
+
+                                <span
+                                    className="
+                    mt-1
+                    max-w-full
+                    truncate
+                    text-sm
+                    font-black
+                    text-zinc-900
+                  "
+                                >
+                  {pokemon.name}
+                </span>
+
+
+                                {/* NÚMERO POKÉDEX */}
+
+                                <span
+                                    className="
+                    mt-0.5
+                    text-xs
+                    font-semibold
+                    text-zinc-500
+                  "
+                                >
+                  #
+                                    {String(
+                                        pokemon.id
+                                    ).padStart(
+                                        3,
+                                        "0"
+                                    )}
+                </span>
+
+                            </button>
+
+                        );
+                    }
+                )}
+
             </div>
-        </>
+
+
+            {/* ============================================== */}
+            {/* CONTADOR */}
+            {/* ============================================== */}
+
+            <p
+                className="
+          mt-8
+          text-center
+          text-xs
+          font-semibold
+          text-zinc-500
+        "
+            >
+                {
+                    generationPokemon.length
+                } Pokémon
+            </p>
+
+        </section>
     );
 }

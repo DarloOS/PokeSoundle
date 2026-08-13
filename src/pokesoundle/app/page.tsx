@@ -2,6 +2,12 @@ import PokeSoundleGame from "@/components/PokeSoundleGame";
 import HowToPlay from "@/components/HowToPlay";
 import GameInfo from "@/components/GameInfo";
 import Link from "next/link";
+import GenerationSelector from "@/components/GenerationSelector";
+import {
+  GenerationBadge,
+  GenerationSubtitle,
+  GenerationRange,
+} from "@/components/GenerationDisplay";
 
 export default function Home() {
   return (
@@ -18,10 +24,14 @@ export default function Home() {
                 </h1>
 
                 <div className="mt-2 rounded-full border-2 border-white/30 bg-black/20 px-4 py-1 text-xs font-bold uppercase tracking-[0.25em] text-white">
-                  Sinnoh Cry Challenge
+                  <GenerationSubtitle />
                 </div>
               </div>
             </header>
+
+            <div className="mt-4 flex justify-center">
+              <GenerationSelector />
+            </div>
 
             {/* Consola / Pokédex */}
             <div className="overflow-hidden rounded-[2rem] border-4 border-zinc-950 bg-zinc-100 shadow-2xl">
@@ -35,7 +45,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-black uppercase tracking-[0.2em] text-white">
-                    Gen IV
+                    <GenerationBadge />
                   </span>
                   <Link
                       href="/sounds"
@@ -91,7 +101,7 @@ export default function Home() {
 
               {/* Barra inferior */}
               <footer className="border-t-4 border-zinc-950 bg-zinc-900 px-5 py-3 text-center text-xs font-medium text-zinc-400">
-                Pokémon Gen. IV · #387–493
+                <GenerationRange />
               </footer>
 
             </div>

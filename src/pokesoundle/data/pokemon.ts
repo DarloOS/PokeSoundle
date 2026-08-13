@@ -1,148 +1,185 @@
 import pokemonDetails from "./pokemonDetails.json";
 
+import type {
+  GenerationId,
+} from "@/data/generations";
+
+
 export type Pokemon = {
   id: number;
   name: string;
+
+  generation: GenerationId;
+
   cry: string;
   sprite: string;
 
   type1: string;
   type2: string | null;
+
   color: string;
+
   evolutionStage: number;
+
   height: number;
   weight: number;
 };
 
-const pokemonData = [
-  { id: 387, name: "Turtwig" },
-  { id: 388, name: "Grotle" },
-  { id: 389, name: "Torterra" },
-  { id: 390, name: "Chimchar" },
-  { id: 391, name: "Monferno" },
-  { id: 392, name: "Infernape" },
-  { id: 393, name: "Piplup" },
-  { id: 394, name: "Prinplup" },
-  { id: 395, name: "Empoleon" },
-  { id: 396, name: "Starly" },
-  { id: 397, name: "Staravia" },
-  { id: 398, name: "Staraptor" },
-  { id: 399, name: "Bidoof" },
-  { id: 400, name: "Bibarel" },
-  { id: 401, name: "Kricketot" },
-  { id: 402, name: "Kricketune" },
-  { id: 403, name: "Shinx" },
-  { id: 404, name: "Luxio" },
-  { id: 405, name: "Luxray" },
-  { id: 406, name: "Budew" },
-  { id: 407, name: "Roserade" },
-  { id: 408, name: "Cranidos" },
-  { id: 409, name: "Rampardos" },
-  { id: 410, name: "Shieldon" },
-  { id: 411, name: "Bastiodon" },
-  { id: 412, name: "Burmy" },
-  { id: 413, name: "Wormadam" },
-  { id: 414, name: "Mothim" },
-  { id: 415, name: "Combee" },
-  { id: 416, name: "Vespiquen" },
-  { id: 417, name: "Pachirisu" },
-  { id: 418, name: "Buizel" },
-  { id: 419, name: "Floatzel" },
-  { id: 420, name: "Cherubi" },
-  { id: 421, name: "Cherrim" },
-  { id: 422, name: "Shellos" },
-  { id: 423, name: "Gastrodon" },
-  { id: 424, name: "Ambipom" },
-  { id: 425, name: "Drifloon" },
-  { id: 426, name: "Drifblim" },
-  { id: 427, name: "Buneary" },
-  { id: 428, name: "Lopunny" },
-  { id: 429, name: "Mismagius" },
-  { id: 430, name: "Honchkrow" },
-  { id: 431, name: "Glameow" },
-  { id: 432, name: "Purugly" },
-  { id: 433, name: "Chingling" },
-  { id: 434, name: "Stunky" },
-  { id: 435, name: "Skuntank" },
-  { id: 436, name: "Bronzor" },
-  { id: 437, name: "Bronzong" },
-  { id: 438, name: "Bonsly" },
-  { id: 439, name: "Mime Jr." },
-  { id: 440, name: "Happiny" },
-  { id: 441, name: "Chatot" },
-  { id: 442, name: "Spiritomb" },
-  { id: 443, name: "Gible" },
-  { id: 444, name: "Gabite" },
-  { id: 445, name: "Garchomp" },
-  { id: 446, name: "Munchlax" },
-  { id: 447, name: "Riolu" },
-  { id: 448, name: "Lucario" },
-  { id: 449, name: "Hippopotas" },
-  { id: 450, name: "Hippowdon" },
-  { id: 451, name: "Skorupi" },
-  { id: 452, name: "Drapion" },
-  { id: 453, name: "Croagunk" },
-  { id: 454, name: "Toxicroak" },
-  { id: 455, name: "Carnivine" },
-  { id: 456, name: "Finneon" },
-  { id: 457, name: "Lumineon" },
-  { id: 458, name: "Mantyke" },
-  { id: 459, name: "Snover" },
-  { id: 460, name: "Abomasnow" },
-  { id: 461, name: "Weavile" },
-  { id: 462, name: "Magnezone" },
-  { id: 463, name: "Lickilicky" },
-  { id: 464, name: "Rhyperior" },
-  { id: 465, name: "Tangrowth" },
-  { id: 466, name: "Electivire" },
-  { id: 467, name: "Magmortar" },
-  { id: 468, name: "Togekiss" },
-  { id: 469, name: "Yanmega" },
-  { id: 470, name: "Leafeon" },
-  { id: 471, name: "Glaceon" },
-  { id: 472, name: "Gliscor" },
-  { id: 473, name: "Mamoswine" },
-  { id: 474, name: "Porygon-Z" },
-  { id: 475, name: "Gallade" },
-  { id: 476, name: "Probopass" },
-  { id: 477, name: "Dusknoir" },
-  { id: 478, name: "Froslass" },
-  { id: 479, name: "Rotom" },
-  { id: 480, name: "Uxie" },
-  { id: 481, name: "Mesprit" },
-  { id: 482, name: "Azelf" },
-  { id: 483, name: "Dialga" },
-  { id: 484, name: "Palkia" },
-  { id: 485, name: "Heatran" },
-  { id: 486, name: "Regigigas" },
-  { id: 487, name: "Giratina" },
-  { id: 488, name: "Cresselia" },
-  { id: 489, name: "Phione" },
-  { id: 490, name: "Manaphy" },
-  { id: 491, name: "Darkrai" },
-  { id: 492, name: "Shaymin" },
-  { id: 493, name: "Arceus" },
-];
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-export const pokemon: Pokemon[] = pokemonData.map((item) => {
-  const details = pokemonDetails.find((detail) => detail.id === item.id);
+type PokemonDetails = {
+  id: number;
+  name: string;
 
-  if (!details) {
-    throw new Error(`No existen datos para el Pokémon #${item.id}`);
+  /*
+   * Los datos nuevos generados con
+   * generatePokemonData.mjs ya tienen generation.
+   *
+   * Lo dejamos opcional temporalmente para soportar
+   * los datos antiguos de Gen IV.
+   */
+  generation?: number;
+
+  type1: string;
+  type2: string | null;
+
+  color: string;
+
+  evolutionStage: number;
+
+  height: number;
+  weight: number;
+};
+
+
+const basePath =
+    process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+
+// ==================================================
+// GENERACIÓN SEGÚN NATIONAL DEX
+// ==================================================
+
+function getGenerationFromPokemonId(
+    id: number
+): GenerationId {
+  if (id <= 151) {
+    return 1;
   }
 
-  return {
-    ...item,
+  if (id <= 251) {
+    return 2;
+  }
 
-    cry: `${basePath}/cries/${item.id}.ogg`,
-    sprite: `${basePath}/sprites/${item.id}.png`,
+  if (id <= 386) {
+    return 3;
+  }
 
-    type1: details.type1,
-    type2: details.type2,
-    color: details.color,
-    evolutionStage: details.evolutionStage,
-    height: details.height,
-    weight: details.weight,
-  };
-});
+  if (id <= 493) {
+    return 4;
+  }
+
+  if (id <= 649) {
+    return 5;
+  }
+
+  if (id <= 721) {
+    return 6;
+  }
+
+  if (id <= 809) {
+    return 7;
+  }
+
+  if (id <= 905) {
+    return 8;
+  }
+
+  if (id <= 1025) {
+    return 9;
+  }
+
+  throw new Error(
+      `No se puede determinar la generación del Pokémon #${id}.`
+  );
+}
+
+
+// ==================================================
+// DATOS
+// ==================================================
+
+export const pokemon: Pokemon[] =
+    (
+        pokemonDetails as PokemonDetails[]
+    )
+        .map(
+            (details): Pokemon => {
+
+              const generation =
+                  details.generation
+                      ? (
+                          details.generation as GenerationId
+                      )
+                      : getGenerationFromPokemonId(
+                          details.id
+                      );
+
+
+              return {
+                id:
+                details.id,
+
+                name:
+                details.name,
+
+                generation,
+
+                cry:
+                    `${basePath}/cries/${details.id}.ogg`,
+
+                sprite:
+                    `${basePath}/sprites/${details.id}.png`,
+
+                type1:
+                details.type1,
+
+                type2:
+                details.type2,
+
+                color:
+                details.color,
+
+                evolutionStage:
+                details.evolutionStage,
+
+                height:
+                details.height,
+
+                weight:
+                details.weight,
+              };
+            }
+        )
+
+        /*
+         * Dejamos siempre todo el dataset ordenado
+         * por National Pokédex.
+         */
+        .sort(
+            (a, b) =>
+                a.id - b.id
+        );
+
+
+// ==================================================
+// FILTRAR POR GENERACIÓN
+// ==================================================
+
+export function getPokemonByGeneration(
+    generation: GenerationId
+): Pokemon[] {
+  return pokemon.filter(
+      (item) =>
+          item.generation === generation
+  );
+}

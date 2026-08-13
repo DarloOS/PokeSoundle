@@ -7,11 +7,28 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="sound library added">
-      <change afterPath="$PROJECT_DIR$/src/pokesoundle/app/practice/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/PracticeGame.tsx" afterDir="false" />
+    <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="practice mode added">
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/GenerationDisplay.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/GenerationInfo.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/GenerationProvider.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/GenerationSelector.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/data/generations.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/scripts/downloadPokemonAssets.mjs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/practice/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/practice/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/sounds/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/sounds/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/components/DailyLeaderboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/components/DailyLeaderboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/components/PokeSoundleGame.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/components/PokeSoundleGame.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/components/PracticeGame.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/components/PracticeGame.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/components/SoundLibrary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/components/SoundLibrary.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/data/pokemon.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/data/pokemon.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/data/pokemonDetails.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/data/pokemonDetails.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/lib/dailyPokemon.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/lib/dailyPokemon.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/lib/leaderboard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/lib/leaderboard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/lib/storage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/lib/storage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/scripts/generatePokemonData.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/scripts/generatePokemonData.mjs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,61 +64,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0015430494377506" />
-      <entry key="MS500" value="1.2794092625328584" />
-      <entry key="S2" value="2.421948060251178" />
-      <entry key="S5" value="3.850549003826034" />
-      <entry key="S10" value="4.741459706204988" />
-      <entry key="S30" value="5.5307702326915225" />
-      <entry key="S60" value="5.758514846678034" />
-      <entry key="M2" value="5.877486295267357" />
-      <entry key="M5" value="5.953141213994426" />
-      <entry key="M10" value="6.163428918597066" />
-      <entry key="M15" value="6.928549603048811" />
-      <entry key="M30" value="12.583398487416856" />
-      <entry key="H1" value="28.03232926487797" />
-      <entry key="H2" value="49.58524868246965" />
-      <entry key="H4" value="68.56231706060045" />
-      <entry key="D1" value="91.41388928840271" />
-      <entry key="W1" value="96.17819182993793" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.000005664332687" />
+      <entry key="S5" value="1.0136414948458883" />
+      <entry key="S10" value="1.2031512109985247" />
+      <entry key="S30" value="2.3896703304463145" />
+      <entry key="S60" value="3.3308425663495678" />
+      <entry key="M2" value="4.043948607286648" />
+      <entry key="M5" value="4.650993665918696" />
+      <entry key="M10" value="5.385245707603725" />
+      <entry key="M15" value="6.290938830727875" />
+      <entry key="M30" value="9.926061862304572" />
+      <entry key="H1" value="20.97591170390183" />
+      <entry key="H2" value="42.506495535440315" />
+      <entry key="H4" value="66.52850904585429" />
+      <entry key="D1" value="100.81243263558892" />
+      <entry key="W1" value="108.62945496560408" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="9.11612906130463E-225" />
-      <entry key="S10" value="9.547842196697971E-113" />
-      <entry key="S30" value="4.570549437281221E-38" />
-      <entry key="S60" value="2.1378843367407048E-19" />
-      <entry key="M2" value="4.6237264588226983E-10" />
-      <entry key="M5" value="1.8488494827646371E-4" />
-      <entry key="M10" value="0.014483411243363687" />
-      <entry key="M15" value="0.0696431582257798" />
-      <entry key="M30" value="0.4496283736576391" />
-      <entry key="H1" value="1.460429175086458" />
-      <entry key="H2" value="2.8721379438687364" />
-      <entry key="H4" value="4.120729702811278" />
-      <entry key="D1" value="5.630171370704557" />
-      <entry key="W1" value="5.9455731554609015" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="4.421672862088675E-256" />
+      <entry key="S30" value="7.618372483319612E-86" />
+      <entry key="S60" value="2.760139939082736E-43" />
+      <entry key="M2" value="5.253703766127001E-22" />
+      <entry key="M5" value="3.0838335951041264E-9" />
+      <entry key="M10" value="5.915147134838735E-5" />
+      <entry key="M15" value="0.0017794054537062722" />
+      <entry key="M30" value="0.07187071067835292" />
+      <entry key="H1" value="0.5838880879983445" />
+      <entry key="H2" value="1.8160585743695536" />
+      <entry key="H4" value="3.2766979306094033" />
+      <entry key="D1" value="5.419160251704379" />
+      <entry key="W1" value="5.913216517801452" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9089195022395177" />
-      <entry key="MS500" value="1.2547283160002214" />
-      <entry key="S2" value="2.4041474639332483" />
-      <entry key="S5" value="3.8355747646119918" />
-      <entry key="S10" value="4.731391091718458" />
-      <entry key="S30" value="5.526637962816432" />
-      <entry key="S60" value="5.756335888393919" />
-      <entry key="M2" value="5.876367283024588" />
-      <entry key="M5" value="5.952869873906807" />
-      <entry key="M10" value="6.177624867810677" />
-      <entry key="M15" value="6.997830484963985" />
-      <entry key="M30" value="13.032211391917489" />
-      <entry key="H1" value="29.49155719239685" />
-      <entry key="H2" value="52.456275085346306" />
-      <entry key="H4" value="72.68227641028943" />
-      <entry key="D1" value="97.04389050330418" />
-      <entry key="W1" value="102.12373945286939" />
+      <entry key="MS100" value="5.020087044219075E-4" />
+      <entry key="MS500" value="0.21884783242356598" />
+      <entry key="S2" value="0.6839726428966196" />
+      <entry key="S5" value="0.8720226546594199" />
+      <entry key="S10" value="1.1249591817819027" />
+      <entry key="S30" value="2.3527703316086876" />
+      <entry key="S60" value="3.308154140552585" />
+      <entry key="M2" value="4.03098997223995" />
+      <entry key="M5" value="4.645180384954887" />
+      <entry key="M10" value="5.381774613928307" />
+      <entry key="M15" value="6.28987726421482" />
+      <entry key="M30" value="9.995830594974723" />
+      <entry key="H1" value="21.55805923294053" />
+      <entry key="H2" value="44.3211211423029" />
+      <entry key="H4" value="69.80419885648396" />
+      <entry key="D1" value="106.23135838336997" />
+      <entry key="W1" value="114.54263586051187" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -177,7 +194,7 @@
       <workItem from="1786489282911" duration="291000" />
       <workItem from="1786489809435" duration="4998000" />
       <workItem from="1786571529620" duration="3333000" />
-      <workItem from="1786648177141" duration="7272000" />
+      <workItem from="1786648177141" duration="11614000" />
     </task>
     <task id="LOCAL-00001" summary="mejora visual">
       <option name="closed" value="true" />
@@ -227,7 +244,15 @@
       <option name="project" value="LOCAL" />
       <updated>1786655297854</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="practice mode added">
+      <option name="closed" value="true" />
+      <created>1786656114527</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1786656114527</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -239,6 +264,7 @@
     <MESSAGE value="supabase and leaderboard added" />
     <MESSAGE value="visual update" />
     <MESSAGE value="sound library added" />
-    <option name="LAST_COMMIT_MESSAGE" value="sound library added" />
+    <MESSAGE value="practice mode added" />
+    <option name="LAST_COMMIT_MESSAGE" value="practice mode added" />
   </component>
 </project>
