@@ -219,15 +219,19 @@ function getSpriteUrl(
             .sprites
             ?.versions;
 
+    const other =
+        pokemonData
+            .sprites
+            ?.other;
+
 
     switch (
         generationId
         ) {
 
-        // ----------------------------------------------
-        // GEN I
-        // Pokémon Red / Blue
-        // ----------------------------------------------
+        // ==============================================
+        // GEN I - RED / BLUE
+        // ==============================================
 
         case 1:
             return (
@@ -245,10 +249,49 @@ function getSpriteUrl(
             );
 
 
-        // ----------------------------------------------
-        // GEN IV
-        // Pokémon Platinum
-        // ----------------------------------------------
+        // ==============================================
+        // GEN II - CRYSTAL
+        // ==============================================
+
+        case 2:
+            return (
+                versions
+                    ?.["generation-ii"]
+                    ?.crystal
+                    ?.front_transparent
+                ??
+                versions
+                    ?.["generation-ii"]
+                    ?.crystal
+                    ?.front_default
+                ??
+                null
+            );
+
+
+        // ==============================================
+        // GEN III - EMERALD
+        // ==============================================
+
+        case 3:
+            return (
+                versions
+                    ?.["generation-iii"]
+                    ?.emerald
+                    ?.front_default
+                ??
+                versions
+                    ?.["generation-iii"]
+                    ?.["ruby-sapphire"]
+                    ?.front_default
+                ??
+                null
+            );
+
+
+        // ==============================================
+        // GEN IV - PLATINUM
+        // ==============================================
 
         case 4:
             return (
@@ -257,17 +300,162 @@ function getSpriteUrl(
                     ?.platinum
                     ?.front_default
                 ??
+                versions
+                    ?.["generation-iv"]
+                    ?.["diamond-pearl"]
+                    ?.front_default
+                ??
+                null
+            );
+
+
+        // ==============================================
+        // GEN V - BLACK / WHITE
+        // ==============================================
+
+        case 5:
+            return (
+                versions
+                    ?.["generation-v"]
+                    ?.["black-white"]
+                    ?.front_default
+                ??
+                null
+            );
+
+
+        // ==============================================
+        // GEN VI - X / Y
+        // ==============================================
+
+        case 6:
+            return (
+                versions
+                    ?.["generation-vi"]
+                    ?.["x-y"]
+                    ?.front_default
+                ??
+                versions
+                    ?.["generation-vi"]
+                    ?.["omegaruby-alphasapphire"]
+                    ?.front_default
+                ??
+                null
+            );
+
+
+        // ==============================================
+        // GEN VII - ULTRA SUN / ULTRA MOON
+        // ==============================================
+
+        case 7:
+            return (
+                versions
+                    ?.["generation-vii"]
+                    ?.["ultra-sun-ultra-moon"]
+                    ?.front_default
+                ??
+                null
+            );
+
+
+        // ==============================================
+        // GEN VIII - HOME
+        // ==============================================
+
+        /*
+         * PokéAPI no tiene una colección completa
+         * de sprites de Sword / Shield equivalente
+         * a las generaciones anteriores.
+         *
+         * Para los Pokémon de Galar usamos HOME.
+         */
+        case 8:
+            return (
+                other
+                    ?.home
+                    ?.front_default
+                ??
+                pokemonData
+                    .sprites
+                    ?.front_default
+                ??
+                null
+            );
+
+
+        // ==============================================
+        // GEN IX - SCARLET / VIOLET
+        // ==============================================
+
+        case 9:
+            return (
+                versions
+                    ?.["generation-ix"]
+                    ?.["scarlet-violet"]
+                    ?.front_default
+                ??
+                other
+                    ?.home
+                    ?.front_default
+                ??
+                pokemonData
+                    .sprites
+                    ?.front_default
+                ??
                 null
             );
 
 
         default:
-            throw new Error(
-                `Todavía no hay una fuente de sprites configurada para Gen ${generationId}.`
-            );
+            return null;
     }
 }
 
+function getCryUrl(
+    pokemonData,
+    generationId
+) {
+
+    /*
+     * Para las generaciones antiguas mantenemos
+     * el criterio actual de PokeSoundle:
+     * preferir legacy.
+     */
+    if (
+        generationId <= 7
+    ) {
+        return (
+            pokemonData
+                .cries
+                ?.legacy
+            ??
+            pokemonData
+                .cries
+                ?.latest
+            ??
+            null
+        );
+    }
+
+
+    /*
+     * Para Gen VIII y IX muchos Pokémon no
+     * disponen de legacy, así que priorizamos
+     * latest.
+     */
+    return (
+        pokemonData
+            .cries
+            ?.latest
+        ??
+        pokemonData
+            .cries
+            ?.legacy
+        ??
+        null
+    );
+}
 
 // ==================================================
 // DATOS
@@ -386,9 +574,10 @@ async function downloadPokemonAssets(
     // ----------------------------------------------
 
     const cryUrl =
-        pokemonData
-            .cries
-            ?.legacy;
+        getCryUrl(
+            pokemonData,
+            generation
+        );
 
 
     if (!cryUrl) {

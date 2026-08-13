@@ -9,8 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="GEN I added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pokesoundle/components/GenerationSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/components/GenerationSelector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/scripts/downloadPokemonAssets.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/scripts/downloadPokemonAssets.mjs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,7 +175,7 @@
       <workItem from="1786489282911" duration="291000" />
       <workItem from="1786489809435" duration="4998000" />
       <workItem from="1786571529620" duration="3333000" />
-      <workItem from="1786648177141" duration="11985000" />
+      <workItem from="1786648177141" duration="12326000" />
     </task>
     <task id="LOCAL-00001" summary="mejora visual">
       <option name="closed" value="true" />
@@ -242,7 +241,15 @@
       <option name="project" value="LOCAL" />
       <updated>1786660984011</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="GEN I added">
+      <option name="closed" value="true" />
+      <created>1786661178868</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1786661178868</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
