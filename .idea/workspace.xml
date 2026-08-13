@@ -7,9 +7,11 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="visual update">
-      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/SoundLibrary.tsx" afterDir="false" />
+    <list default="true" id="91764532-adfa-421e-867c-fde7887ed0b3" name="Changes" comment="sound library added">
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/app/practice/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pokesoundle/components/PracticeGame.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pokesoundle/app/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,61 +47,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0006480536516547" />
-      <entry key="MS500" value="1.3535879786004121" />
-      <entry key="S2" value="2.6794894046685562" />
-      <entry key="S5" value="3.3698441019572787" />
-      <entry key="S10" value="3.664720736294885" />
-      <entry key="S30" value="3.8906547495922776" />
-      <entry key="S60" value="4.149556666560141" />
-      <entry key="M2" value="5.088731335764478" />
-      <entry key="M5" value="7.170129317998184" />
-      <entry key="M10" value="9.924729728579429" />
-      <entry key="M15" value="13.289525689733532" />
-      <entry key="M30" value="24.71800360354211" />
-      <entry key="H1" value="42.67276061743316" />
-      <entry key="H2" value="60.65470748778845" />
-      <entry key="H4" value="73.80268933697685" />
-      <entry key="D1" value="87.79869706042288" />
-      <entry key="W1" value="90.53364934679045" />
+      <entry key="MS100" value="1.0015430494377506" />
+      <entry key="MS500" value="1.2794092625328584" />
+      <entry key="S2" value="2.421948060251178" />
+      <entry key="S5" value="3.850549003826034" />
+      <entry key="S10" value="4.741459706204988" />
+      <entry key="S30" value="5.5307702326915225" />
+      <entry key="S60" value="5.758514846678034" />
+      <entry key="M2" value="5.877486295267357" />
+      <entry key="M5" value="5.953141213994426" />
+      <entry key="M10" value="6.163428918597066" />
+      <entry key="M15" value="6.928549603048811" />
+      <entry key="M30" value="12.583398487416856" />
+      <entry key="H1" value="28.03232926487797" />
+      <entry key="H2" value="49.58524868246965" />
+      <entry key="H4" value="68.56231706060045" />
+      <entry key="D1" value="91.41388928840271" />
+      <entry key="W1" value="96.17819182993793" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="1.149884143939543E-174" />
-      <entry key="S2" value="3.274639690025552E-44" />
-      <entry key="S5" value="4.037061900665919E-18" />
-      <entry key="S10" value="2.009244111765895E-9" />
-      <entry key="S30" value="0.001261859208695702" />
-      <entry key="S60" value="0.03552265768063685" />
-      <entry key="M2" value="0.18847456768239898" />
-      <entry key="M5" value="0.5140505228080117" />
-      <entry key="M10" value="0.7637003449804006" />
-      <entry key="M15" value="0.9792942561820097" />
-      <entry key="M30" value="1.686052464295085" />
-      <entry key="H1" value="2.8280637021093344" />
-      <entry key="H2" value="3.9967744297010928" />
-      <entry key="H4" value="4.861007598976567" />
-      <entry key="D1" value="5.787357482674549" />
-      <entry key="W1" value="5.96900732940137" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="9.11612906130463E-225" />
+      <entry key="S10" value="9.547842196697971E-113" />
+      <entry key="S30" value="4.570549437281221E-38" />
+      <entry key="S60" value="2.1378843367407048E-19" />
+      <entry key="M2" value="4.6237264588226983E-10" />
+      <entry key="M5" value="1.8488494827646371E-4" />
+      <entry key="M10" value="0.014483411243363687" />
+      <entry key="M15" value="0.0696431582257798" />
+      <entry key="M30" value="0.4496283736576391" />
+      <entry key="H1" value="1.460429175086458" />
+      <entry key="H2" value="2.8721379438687364" />
+      <entry key="H4" value="4.120729702811278" />
+      <entry key="D1" value="5.630171370704557" />
+      <entry key="W1" value="5.9455731554609015" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.908119563156165" />
-      <entry key="MS500" value="1.3285679377225537" />
-      <entry key="S2" value="2.6673929210021994" />
-      <entry key="S5" value="3.363769388261002" />
-      <entry key="S10" value="3.6614183318154723" />
-      <entry key="S30" value="3.8906652945066638" />
-      <entry key="S60" value="4.183265374751687" />
-      <entry key="M2" value="5.273628479136462" />
-      <entry key="M5" value="7.680411128384773" />
-      <entry key="M10" value="10.685329510004483" />
-      <entry key="M15" value="14.265873162319933" />
-      <entry key="M30" value="26.401284999483746" />
-      <entry key="H1" value="45.498572281050116" />
-      <entry key="H2" value="64.64996178038241" />
-      <entry key="H4" value="78.66279948818622" />
-      <entry key="D1" value="93.58588127778937" />
-      <entry key="W1" value="96.50263127199418" />
+      <entry key="MS100" value="0.9089195022395177" />
+      <entry key="MS500" value="1.2547283160002214" />
+      <entry key="S2" value="2.4041474639332483" />
+      <entry key="S5" value="3.8355747646119918" />
+      <entry key="S10" value="4.731391091718458" />
+      <entry key="S30" value="5.526637962816432" />
+      <entry key="S60" value="5.756335888393919" />
+      <entry key="M2" value="5.876367283024588" />
+      <entry key="M5" value="5.952869873906807" />
+      <entry key="M10" value="6.177624867810677" />
+      <entry key="M15" value="6.997830484963985" />
+      <entry key="M30" value="13.032211391917489" />
+      <entry key="H1" value="29.49155719239685" />
+      <entry key="H2" value="52.456275085346306" />
+      <entry key="H4" value="72.68227641028943" />
+      <entry key="D1" value="97.04389050330418" />
+      <entry key="W1" value="102.12373945286939" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -175,7 +177,7 @@
       <workItem from="1786489282911" duration="291000" />
       <workItem from="1786489809435" duration="4998000" />
       <workItem from="1786571529620" duration="3333000" />
-      <workItem from="1786648177141" duration="6225000" />
+      <workItem from="1786648177141" duration="7272000" />
     </task>
     <task id="LOCAL-00001" summary="mejora visual">
       <option name="closed" value="true" />
@@ -217,7 +219,15 @@
       <option name="project" value="LOCAL" />
       <updated>1786653178178</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="sound library added">
+      <option name="closed" value="true" />
+      <created>1786655297854</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1786655297854</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -228,6 +238,7 @@
     <MESSAGE value="página de información añadida" />
     <MESSAGE value="supabase and leaderboard added" />
     <MESSAGE value="visual update" />
-    <option name="LAST_COMMIT_MESSAGE" value="visual update" />
+    <MESSAGE value="sound library added" />
+    <option name="LAST_COMMIT_MESSAGE" value="sound library added" />
   </component>
 </project>

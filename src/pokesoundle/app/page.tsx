@@ -61,6 +61,24 @@ export default function Home() {
                       >
                       ♪
                   </Link>
+                  <Link
+                      href="/practice"
+                      className="
+                        rounded-full
+                        border-2 border-zinc-950
+                        bg-blue-500
+                        px-4 py-2
+                        text-xs font-black
+                        text-white
+                        shadow-[0_3px_0_#18181b]
+                        transition
+                        hover:bg-blue-400
+                        active:translate-y-[3px]
+                        active:shadow-none
+                      "
+                  >
+                    Práctica
+                  </Link>
                   <GameInfo />
                   <HowToPlay />
                 </div>
