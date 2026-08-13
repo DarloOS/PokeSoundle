@@ -179,7 +179,7 @@ export default function DailyLeaderboard({
             <div className="mt-6 border-t border-green-200 pt-5">
 
                 <h3 className="text-lg font-black text-zinc-950">
-                    🏆 Entra en el leaderboard
+                    Entra en el leaderboard
                 </h3>
 
                 <p className="mt-1 text-sm text-zinc-600">
@@ -284,7 +284,7 @@ export default function DailyLeaderboard({
 
                 <div className="text-left">
                     <h3 className="text-lg font-black text-zinc-950">
-                        🏆 Leaderboard de hoy
+                        Leaderboard de hoy
                     </h3>
 
                     {myPosition > 0 && (
