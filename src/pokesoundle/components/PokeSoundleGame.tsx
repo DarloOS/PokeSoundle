@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import { pokemon, type Pokemon } from "@/data/pokemon";
-
+import DailyLeaderboard from "@/components/DailyLeaderboard";
 import {
   getDailyPokemon,
   getPokeSoundleNumber,
@@ -545,6 +545,11 @@ export default function PokeSoundleGame() {
                         : "intentos"}
                   </strong>
                 </p>
+
+                <DailyLeaderboard
+                    gameNumber={gameNumber}
+                    attempts={guesses.length}
+                />
 
                 <NextPokemonCountdown />
 
